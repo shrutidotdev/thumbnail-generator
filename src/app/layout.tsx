@@ -10,6 +10,8 @@ import {
 import { Geist, Geist_Mono } from 'next/font/google'
 import './globals.css'
 import { Button } from '@/components/ui/button'
+import { auth, currentUser } from '@clerk/nextjs/server';
+import { redirect } from 'next/navigation';
 import { AuthWelcome } from './utils/auth-welcome'
 
 const geistSans = Geist({
@@ -27,6 +29,7 @@ export const metadata: Metadata = {
   description: 'Generate thumbnails for your videos with AI',
 }
 
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -36,10 +39,10 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="en">
         <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-          <header className="flex justify-between items-center p-4 gap-4 h-16">
-            <AuthWelcome />
+          <header className='flex justify-end items-center p-4 gap-4 '>
             
-            <div className="flex items-center gap-4">
+            <AuthWelcome />
+            <div className="flex items-center gap-4 justify-center">
               <SignedOut>
                 <SignInButton />
                 <SignUpButton>

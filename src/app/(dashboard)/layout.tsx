@@ -3,10 +3,10 @@ import { AppSidebar } from "@/app/components/app-sidebar"
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <SidebarProvider>
+    <SidebarProvider className="w-full h-screen">
       <AppSidebar />
-      <main className='w-full h-screen'>
         <SidebarTrigger />
+      <main className='flex flex-col items-center justify-center w-full h-screen'>
         {children}
       </main>
     </SidebarProvider>

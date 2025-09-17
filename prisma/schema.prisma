@@ -1,0 +1,118 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+    // uses connection pooling
+    // directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
+}
+
+// User model for Clerk integration
+model User {
+    id        String   @id // This will be Clerk's user ID
+    email     String   @unique
+    name      String?
+    imageUrl  String?
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    // Subscription/Credits
+    credits          Int      @default(5) // Free tier credits
+    stripeCustomerId String?  @unique
+    subscriptionId   String?  @unique
+    planType         PlanType @default(FREE)
+
+    // Relations
+    thumbnails Thumbnail[]
+
+    @@map("users")
+}
+
+// Thumbnail model for your app
+model Thumbnail {
+    id          String  @id @default(cuid())
+    title       String
+    description String?
+
+    // Image data
+    originalImageUrl String
+    thumbnailUrl     String?
+    width            Int
+    height           Int
+    format           ImageFormat @default(PNG)
+
+    // Settings used
+    settings Json // Store thumbnail generation settings
+
+    // Status
+    status ThumbnailStatus @default(PROCESSING)
+
+    // Metadata
+    fileSize  Int?
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    // User relation
+    userId String
+    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    // Indexes
+    @@index([userId])
+    @@index([status])
+    @@index([createdAt])
+    @@map("thumbnails")
+}
+
+// Template model for predefined thumbnail styles
+model ThumbnailTemplate {
+    id          String   @id @default(cuid())
+    name        String
+    description String?
+    previewUrl  String
+    settings    Json // Template settings
+    category    String
+    isActive    Boolean  @default(true)
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+
+    @@index([category])
+    @@index([isActive])
+    @@map("thumbnail_templates")
+}
+
+// Usage tracking for rate limiting and analytics
+model UsageLog {
+    id        String   @id @default(cuid())
+    userId    String
+    action    String // 'thumbnail_generate', 'template_use', etc.
+    metadata  Json? // Additional data
+    createdAt DateTime @default(now())
+
+    @@index([userId])
+    @@index([createdAt])
+    @@map("usage_logs")
+}
+
+// Enums
+enum PlanType {
+    FREE
+    PRO
+    ENTERPRISE
+}
+
+enum ImageFormat {
+    PNG
+    JPG
+    WEBP
+}
+
+enum ThumbnailStatus {
+    PROCESSING
+    COMPLETED
+    FAILED
+}
