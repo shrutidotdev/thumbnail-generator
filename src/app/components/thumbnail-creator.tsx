@@ -1,22 +1,20 @@
 "use client";
 
-import { CornerDownLeft } from "lucide-react";
 import { Dropzone } from "./dropzone";
 
 export const ThumbnailCreator = () => {
-  const setSelectedImage = (file?: File) => {
+  const setSelectedImage = (files?: File[]) => {
+    // handle the array of files here
   };
 
   return (
-    <main className="min-h-screen bg-gray-50 flex items-center justify-center p-8">
-      <div className="w-full max-w-2xl">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">File Upload Demo</h1>
-          <p className="text-gray-600">Click or drag files to test the dropzone component</p>
+    // <CHANGE> Enhanced responsive layout with better spacing and alignment
+    <section className="w-full flex items-center justify-center py-8 sm:py-12 lg:py-16">
+      <div className="w-full max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-center items-center">
+          <Dropzone setFile={setSelectedImage} />
         </div>
-       <Dropzone setFile={setSelectedImage} />
-
       </div>
-    </main>
+    </section>
   );
 };
