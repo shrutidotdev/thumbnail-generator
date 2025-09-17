@@ -13,8 +13,10 @@ import Image1 from "../../../../public/pov.jpg"
 import Image2 from "../../../../public/thumbnail-preview-template.jpg"
 import { ThumbnailCreator } from "@/app/components/thumbnail-creator"
 import Divider from "@/app/components/divider"
+import { StyleDecorative } from "@/app/components/style-decorative"
 
 export default async function HomeThumbnailGenerator() {
+
   const { userId } = await auth()
   if (!userId) throw new Error("Unauthorized")
 
@@ -24,7 +26,7 @@ export default async function HomeThumbnailGenerator() {
   return credits === 0 ? (
     <div className="min-h-screen w-full bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center p-4 sm:p-6 lg:p-8">
       <div className="w-full max-w-md mx-auto">
-        
+
         <Card className="shadow-xl border-0 bg-white/80 backdrop-blur-sm">
           <CardHeader className="text-center pb-6 pt-8 px-6 sm:px-8">
             <div className="flex justify-center mb-6">
@@ -72,10 +74,10 @@ export default async function HomeThumbnailGenerator() {
               <h2 className="scroll-m-20 text-xl font-semibold tracking-tight">
                 Want to create a thumbnail?
               </h2>
-            
+
             </div>
           </header>
-          
+
 
           {/* Main Content Area */}
           <main className="bg-white rounded-2xl sm:rounded-3xl shadow-xl border border-gray-100 overflow-hidden">
@@ -92,38 +94,22 @@ export default async function HomeThumbnailGenerator() {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 </div> */}
-{/* 
+                {/* 
                 <div className="group relative overflow-hidden rounded-xl sm:rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02]"> */}
-                  <Image
-                    src={Image2 || "/placeholder.svg"}
-                    alt="Thumbnail Preview Template 2"
-                    className="min-w-52 rounded-xl" 
-                    priority
-                    sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 40vw"
-                  />
-                  <Image
-                    src={Image2 || "/placeholder.svg"}
-                    alt="Thumbnail Preview Template 2"
-                    className="min-w-52 rounded-xl"
-                    priority
-                    sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 40vw"
-                  />
+                <StyleDecorative
+                  image={Image2.src || "/placeholder.svg"}
+                />
+                <StyleDecorative
+                  image={Image1.src || "/placeholder.svg"}
+                />
+                <StyleDecorative
+                  image={Image2.src || "/placeholder.svg"}
+                />
 
-                   <Image
-                    src={Image1 || "/placeholder.svg"}
-                    alt="Thumbnail Preview Template 2"
-                    className="min-w-52 rounded-xl"
-                    priority
-                    sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 40vw"
-                  />
-                   <Image
-                    src={Image1 || "/placeholder.svg"}
-                    alt="Thumbnail Preview Template 2"
-                    className="min-w-52 rounded-xl"
-                    priority
-                    sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 40vw"
-                  />
-                  {/* <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <StyleDecorative
+                  image={Image1.src || "/placeholder.svg"}
+                />
+                {/* <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 </div> */}
               </div>
             </section>
