@@ -1,4 +1,3 @@
-// lib/db/user.ts
 "use server";
 
 import { auth, currentUser } from '@clerk/nextjs/server';

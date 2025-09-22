@@ -36,7 +36,6 @@ export function Dropzone({ className, setFile }: DropzoneProps) {
   )
 
   return (
-    // <CHANGE> Complete redesign with better proportions, spacing, and responsive behavior
     <div
       className={cn(
         "relative w-full max-w-lg mx-auto transition-all duration-300 ease-out",
@@ -55,10 +54,10 @@ export function Dropzone({ className, setFile }: DropzoneProps) {
         "shadow-lg hover:shadow-xl transition-shadow duration-300",
         "p-6 sm:p-8 lg:p-12"
       )}>
-        
+
         {/* Content wrapper */}
         <div className="relative z-10 text-center space-y-6 sm:space-y-8">
-          
+
           {/* Header section */}
           <div className="space-y-3 sm:space-y-4">
             <div className="flex justify-center">
@@ -66,7 +65,7 @@ export function Dropzone({ className, setFile }: DropzoneProps) {
                 <Upload className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
               </div>
             </div>
-            
+
             <div className="space-y-2">
               <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-white text-balance">
                 Try it out!
@@ -118,16 +117,19 @@ export function Dropzone({ className, setFile }: DropzoneProps) {
 
         {/* Decorative elements */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent pointer-events-none" />
-        
+
+        {isDragOver && (<div className="absolute  bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full animate-[shimmer_2s_ease-in-out_infinite]" />
+        )}
+
         {/* Drag overlay */}
-        {isDragOver && (
+        {/* {isDragOver && (
           <div className="absolute inset-0 bg-white/10 backdrop-blur-sm rounded-2xl sm:rounded-3xl flex items-center justify-center">
             <div className="text-white text-center space-y-2">
               <Upload className="w-8 h-8 sm:w-12 sm:h-12 mx-auto animate-bounce" />
               <p className="font-semibold text-sm sm:text-base">Drop files here</p>
             </div>
           </div>
-        )}
+        )} */}
       </div>
     </div>
   )
