@@ -8,9 +8,38 @@ import { removeBackground } from "@imgly/background-removal"
 import { Download, Sparkles, CheckCircle, Palette } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Input } from "@/components/ui/input"
-
-import { Inter, AR_One_Sans, Acme, Akronim, Alef, Ruslan_Display, } from "next/font/google"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+
+import { Inter, Bebas_Neue, Oswald, Righteous, Francois_One } from "next/font/google"
+
+// Configure the fonts
+const inter = Inter({ 
+  subsets: ['latin'],
+  display: 'swap',
+})
+
+const bebasNeue = Bebas_Neue({ 
+  subsets: ['latin'],
+  weight: '400',
+  display: 'swap',
+})
+
+const oswald = Oswald({ 
+  subsets: ['latin'],
+  display: 'swap',
+})
+
+const righteous = Righteous({ 
+  subsets: ['latin'],
+  weight: '400',
+  display: 'swap',
+})
+
+const fredokaOne = Francois_One({ 
+  subsets: ['latin'],
+  weight: '400',
+  display: 'swap',
+})
 
 type TextPreset = {
   name: string
@@ -250,15 +279,51 @@ export const ThumbnailCreator = () => {
   const [processingStep, setProcessingStep] = useState<string>("")
   const [presetKey, setPresetKey] = useState<keyof typeof PRESETS>("sunsetGlow")
   const [text, setText] = useState("POV")
-  // Font selection
+  
+  //  font options with Google Fonts
   const FONT_OPTIONS = [
-    { key: 'arial',  label: 'Arial',        stack: 'Arial, Helvetica, sans-serif' },
-    { key: 'impact', label: 'Impact',       stack: 'Impact, Haettenschweiler, "Arial Black", sans-serif' },
-    { key: 'inter',  label: 'Inter',        stack: 'Inter, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif' },
-    { key: 'domine', label: 'Domine',       stack: 'Domine, Georgia, "Times New Roman", serif' },
-    { key: 'bebas',  label: 'Bebas Neue',   stack: '"Bebas Neue", Impact, "Arial Black", sans-serif' },
-    { key: 'mono',   label: 'Monospace',    stack: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace' },
+    { 
+      key: 'arial', 
+      label: 'Arial', 
+      stack: 'Arial, Helvetica, sans-serif' 
+    },
+    { 
+      key: 'impact', 
+      label: 'Impact', 
+      stack: 'Impact, Haettenschweiler, "Arial Black", sans-serif' 
+    },
+    { 
+      key: 'inter', 
+      label: 'Inter', 
+      stack: `${inter.style.fontFamily}, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif` 
+    },
+    { 
+      key: 'bebas', 
+      label: 'Bebas Neue', 
+      stack: `${bebasNeue.style.fontFamily}, Impact, "Arial Black", sans-serif` 
+    },
+    { 
+      key: 'oswald', 
+      label: 'Oswald', 
+      stack: `${oswald.style.fontFamily}, Impact, "Arial Black", sans-serif` 
+    },
+    { 
+      key: 'righteous', 
+      label: 'Righteous', 
+      stack: `${righteous.style.fontFamily}, Impact, "Arial Black", sans-serif` 
+    },
+    { 
+      key: 'fredoka', 
+      label: 'Fredoka One', 
+      stack: `${fredokaOne.style.fontFamily}, Impact, "Arial Black", sans-serif` 
+    },
+    { 
+      key: 'mono', 
+      label: 'Monospace', 
+      stack: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace' 
+    },
   ] as const
+  
   const [fontKey, setFontKey] = useState<typeof FONT_OPTIONS[number]['key']>('arial')
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
@@ -367,8 +432,9 @@ export const ThumbnailCreator = () => {
       link.click()
     }
   }
+
   return (
-    <section className="w-full flex flex-col items-center justify-center space-y-12">
+    <section className="w-full flex flex-col items-center justify-center space-y-12 ">
       {loading && (
         <div className="fixed inset-0 bg-background/80 backdrop-blur-sm flex items-center justify-center z-50 animate-fade-in-up">
           <div className="bg-card border border-border/50 p-8 rounded-2xl shadow-2xl max-w-sm w-full mx-4">
@@ -443,12 +509,6 @@ export const ThumbnailCreator = () => {
                         <div className="absolute -inset-1 rounded-full border-2 border-primary animate-pulse" />
                       )}
                     </div>
-
-                    {/* <div className="text-center">
-                      <p className="text-xs font-medium text-foreground group-hover:text-primary transition-colors">
-                        {preset.name}
-                      </p>
-                    </div> */}
                   </div>
 
                   {presetKey === key && (
@@ -503,7 +563,6 @@ export const ThumbnailCreator = () => {
                 "transition-all duration-300",
                 "group relative overflow-hidden",
               )}
-
             >
               <div className="absolute inset-0 bg-gradient-to-r from-primary to-primary/80 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               <Download className="w-5 h-5 mr-2 relative z-10" />
