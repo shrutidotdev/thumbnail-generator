@@ -5,8 +5,238 @@ import { Dropzone } from "./dropzone"
 import { Button } from "@/components/ui/button"
 import LoadingSpinner from "./loading"
 import { removeBackground } from "@imgly/background-removal"
-import { Download, Sparkles, ImageIcon, CheckCircle } from "lucide-react"
+import { Download, Sparkles, CheckCircle, Palette } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { Input } from "@/components/ui/input"
+
+type TextPreset = {
+  name: string
+  fontSize: number
+  fontWeight: string
+  shadowColor: string
+  color: string
+  opacity: number
+  shadowBlurFactor: number
+}
+
+const PRESETS: Record<string, TextPreset> = {
+  glassWhiteBold: {
+    name: "Glass White Bold",
+    fontSize: 200,
+    fontWeight: "bold",
+    color: "rgba(255, 255, 255, 0.95)",
+    opacity: 0.95,
+    shadowColor: "rgba(255, 255, 255, 0.9)",
+    shadowBlurFactor: 1.2,
+  },
+  neonCyan: {
+    name: "Neon Cyan",
+    fontSize: 120,
+    fontWeight: "bold",
+    color: "#00f5ff",
+    opacity: 1,
+    shadowColor: "rgba(0, 245, 255, 0.9)",
+    shadowBlurFactor: 0.35,
+  },
+  sunsetGlow: {
+    name: "Sunset Glow",
+    fontSize: 110,
+    fontWeight: "bold",
+    opacity: 1,
+    color: "#ff4500",
+    shadowColor: "rgba(255, 69, 0, 0.8)",
+    shadowBlurFactor: 0.25,
+  },
+  cyberPink: {
+    name: "Cyber Pink",
+    fontSize: 100,
+    fontWeight: "600",
+    opacity: 1,
+    color: "#ff1493",
+    shadowColor: "rgba(255, 20, 147, 0.9)",
+    shadowBlurFactor: 0.3,
+  },
+  elegantWhite: {
+    name: "Elegant White",
+    fontSize: 140,
+    fontWeight: "300",
+    color: "#f8f9fa",
+    opacity: 1,
+    shadowColor: "rgba(248, 249, 250, 0.8)",
+    shadowBlurFactor: 0.2,
+  },
+  deepShadow: {
+    name: "Deep Shadow",
+    fontSize: 160,
+    fontWeight: "bold",
+    color: "#1a1a1a",
+    opacity: 1,
+    shadowColor: "rgba(255, 255, 255, 0.95)",
+    shadowBlurFactor: 0.15,
+  },
+  pureWhite: {
+    name: "Pure White",
+    fontSize: 100,
+    fontWeight: "bold",
+    color: "rgba(255, 255, 255, 1)",
+    opacity: 1,
+    shadowColor: "rgba(255, 255, 255, 0.6)",
+    shadowBlurFactor: 0.1,
+  },
+  solidBlack: {
+    name: "Solid Black",
+    fontSize: 100,
+    fontWeight: "bold",
+    color: "rgba(0, 0, 0, 1)",
+    opacity: 1,
+    shadowColor: "rgba(255, 255, 255, 0.3)",
+    shadowBlurFactor: 0.05,
+  },
+  softWhite: {
+    name: "Soft White",
+    fontSize: 100,
+    fontWeight: "bold",
+    color: "rgba(255, 255, 255, 0.9)",
+    opacity: 0.9,
+    shadowColor: "rgba(255, 255, 255, 0.5)",
+    shadowBlurFactor: 0.12,
+  },
+  oceanBreeze: {
+    name: "Ocean Breeze",
+    fontSize: 140,
+    fontWeight: "bold",
+    color: "#00b4d8",
+    opacity: 1,
+    shadowColor: "rgba(0, 180, 216, 0.9)",
+    shadowBlurFactor: 0.25,
+  },
+  goldenHour: {
+    name: "Golden Hour",
+    fontSize: 130,
+    fontWeight: "600",
+    color: "#f77f00",
+    opacity: 1,
+    shadowColor: "rgba(247, 127, 0, 0.8)",
+    shadowBlurFactor: 0.22,
+  },
+  lavenderDream: {
+    name: "Lavender Dream",
+    fontSize: 120,
+    fontWeight: "500",
+    color: "#9d4edd",
+    opacity: 1,
+    shadowColor: "rgba(157, 78, 221, 0.7)",
+    shadowBlurFactor: 0.2,
+  },
+  emeraldGlow: {
+    name: "Emerald Glow",
+    fontSize: 135,
+    fontWeight: "bold",
+    color: "#2d6a4f",
+    opacity: 1,
+    shadowColor: "rgba(45, 106, 79, 0.8)",
+    shadowBlurFactor: 0.18,
+  },
+  cosmicPurple: {
+    name: "Cosmic Purple",
+    fontSize: 150,
+    fontWeight: "bold",
+    color: "#7209b7",
+    opacity: 1,
+    shadowColor: "rgba(114, 9, 183, 0.9)",
+    shadowBlurFactor: 0.3,
+  },
+  sunflowerYellow: {
+    name: "Sunflower Yellow",
+    fontSize: 125,
+    fontWeight: "600",
+    color: "#ffbe0b",
+    opacity: 1,
+    shadowColor: "rgba(255, 190, 11, 0.8)",
+    shadowBlurFactor: 0.2,
+  },
+  crimsonFire: {
+    name: "Crimson Fire",
+    fontSize: 140,
+    fontWeight: "bold",
+    color: "#dc2626",
+    opacity: 1,
+    shadowColor: "rgba(220, 38, 38, 0.9)",
+    shadowBlurFactor: 0.25,
+  },
+  mintFresh: {
+    name: "Mint Fresh",
+    fontSize: 115,
+    fontWeight: "500",
+    opacity: 1,
+    color: "#06ffa5",
+    shadowColor: "rgba(6, 255, 165, 0.7)",
+    shadowBlurFactor: 0.15,
+  },
+  royalBlue: {
+    name: "Royal Blue",
+    fontSize: 160,
+    fontWeight: "bold",
+    opacity: 1,
+    color: "#1e40af",
+    shadowColor: "rgba(30, 64, 175, 0.8)",
+    shadowBlurFactor: 0.28,
+  },
+  peachSunset: {
+    name: "Peach Sunset",
+    fontSize: 130,
+    fontWeight: "600",
+    color: "#fb8500",
+    opacity: 1,
+    shadowColor: "rgba(251, 133, 0, 0.8)",
+    shadowBlurFactor: 0.22,
+  },
+  electricBlue: {
+    name: "Electric Blue",
+    fontSize: 145,
+    fontWeight: "bold",
+    color: "#0077b6",
+    opacity: 1,
+    shadowColor: "rgba(0, 119, 182, 0.9)",
+    shadowBlurFactor: 0.3,
+  },
+  roseGold: {
+    name: "Rose Gold",
+    fontSize: 135,
+    fontWeight: "500",
+    color: "#e85d75",
+    opacity: 1,
+    shadowColor: "rgba(232, 93, 117, 0.7)",
+    shadowBlurFactor: 0.2,
+  },
+  forestGreen: {
+    name: "Forest Green",
+    fontSize: 140,
+    fontWeight: "bold",
+    color: "#2d5016",
+    opacity: 1,
+    shadowColor: "rgba(45, 80, 22, 0.8)",
+    shadowBlurFactor: 0.25,
+  },
+  amethyst: {
+    name: "Amethyst",
+    fontSize: 125,
+    fontWeight: "600",
+    color: "#8e44ad",
+    opacity: 1,
+    shadowColor: "rgba(142, 68, 173, 0.8)",
+    shadowBlurFactor: 0.2,
+  },
+  turquoise: {
+    name: "Turquoise",
+    fontSize: 130,
+    fontWeight: "500",
+    color: "#17a2b8",
+    opacity: 1,
+    shadowColor: "rgba(23, 162, 184, 0.7)",
+    shadowBlurFactor: 0.18,
+  },
+}
 
 export const ThumbnailCreator = () => {
   const [loading, setLoading] = useState(false)
@@ -15,7 +245,8 @@ export const ThumbnailCreator = () => {
   const [error, setError] = useState<string | null>(null)
   const [canvasReady, setCanvasReady] = useState(false)
   const [processingStep, setProcessingStep] = useState<string>("")
-  const [text, setText] = useState("POV:")
+  const [presetKey, setPresetKey] = useState<keyof typeof PRESETS>("sunsetGlow")
+  const [text, setText] = useState("POV")
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
   const setSelectedImage = async (file?: File) => {
@@ -49,61 +280,63 @@ export const ThumbnailCreator = () => {
   }
 
   const drawCompositeImage = () => {
-    if (!canvasRef.current || !imageSrc) return;
+    if (!canvasRef.current || !imageSrc) return
 
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
+    const canvas = canvasRef.current
+    const ctx = canvas.getContext("2d")
+    if (!ctx) return
 
-    ctx.imageSmoothingEnabled = true;
-    ctx.imageSmoothingQuality = "high";
-    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.imageSmoothingEnabled = true
+    ctx.imageSmoothingQuality = "high"
+    ctx.setTransform(1, 0, 0, 1, 0, 0)
 
-    const bg = new Image();
+    const activePreset = PRESETS[presetKey]
+    const bg = new Image()
+
     bg.onload = () => {
-      canvas.width = bg.width;
-      canvas.height = bg.height;
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.drawImage(bg, 0, 0, canvas.width, canvas.height);
-      ctx.save();
+      canvas.width = bg.width
+      canvas.height = bg.height
+      ctx.clearRect(0, 0, canvas.width, canvas.height)
+      ctx.drawImage(bg, 0, 0, canvas.width, canvas.height)
+      ctx.save()
 
-      // Calculate font size to fill ~90% width
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
+      ctx.textAlign = "center"
+      ctx.textBaseline = "middle"
 
-      const baseSize = 100;
-      const fontFamily = "Arial";
-      ctx.font = `bold ${baseSize}px ${fontFamily}`;
-      const measured = ctx.measureText(text).width;
-      const targetWidth = canvas.width * 0.9;
-      const scaled = Math.max(24, Math.floor((baseSize * targetWidth) / Math.max(1, measured)));
-      ctx.font = `bold ${scaled}px ${fontFamily}`;
+      const baseSize = activePreset.fontSize || 100
+      const fontWeight = activePreset.fontWeight || "bold"
+      const fontFamily = "Arial"
 
-      ctx.fillStyle = "rgb(255, 255, 255)";
-      ctx.globalAlpha = 1;
+      ctx.font = `${fontWeight} ${baseSize}px ${fontFamily}`
+      const measured = ctx.measureText(text).width
+      const targetWidth = canvas.width * 0.9
+      const scaled = Math.max(24, Math.floor((baseSize * targetWidth) / Math.max(1, measured)))
+      ctx.font = `${fontWeight} ${scaled}px ${fontFamily}`
 
-      const x = canvas.width / 2;
-      const y = canvas.height / 2;
+      ctx.fillStyle = activePreset.color
+      ctx.globalAlpha = activePreset.opacity || 1
 
-      ctx.translate(x, y);
-      // Light stroke for contrast
-      ctx.lineWidth = Math.max(2, Math.floor(scaled * 0.04));
-      ctx.strokeStyle = "rgb(255, 255, 255)";
-      ctx.strokeText(text, 0, 0);
-      ctx.fillText(text, 0, 0);
+      const x = canvas.width / 2
+      const y = canvas.height / 2
+
+      ctx.translate(x, y)
+      ctx.shadowColor = activePreset.shadowColor
+      ctx.shadowBlur = Math.floor(scaled * (activePreset.shadowBlurFactor || 0.1))
+      ctx.shadowOffsetX = 0
+      ctx.shadowOffsetY = 0
+      ctx.fillText(text, 0, 0)
       ctx.restore()
 
-      // Draw subject on top so text appears behind it
       if (processedImageSrc) {
-        const fg = new Image();
+        const fg = new Image()
         fg.onload = () => {
-          ctx.drawImage(fg, 0, 0, canvas.width, canvas.height);
-        };
-        fg.src = processedImageSrc;
+          ctx.drawImage(fg, 0, 0, canvas.width, canvas.height)
+        }
+        fg.src = processedImageSrc
       }
-    };
-    bg.src = imageSrc;
-  };
+    }
+    bg.src = imageSrc
+  }
 
   useEffect(() => {
     if (imageSrc) setCanvasReady(true)
@@ -111,11 +344,10 @@ export const ThumbnailCreator = () => {
 
   useEffect(() => {
     if (canvasReady) drawCompositeImage()
-  }, [canvasReady, imageSrc, processedImageSrc, text])
+  }, [canvasReady, imageSrc, processedImageSrc, text, presetKey])
 
   return (
     <section className="w-full flex flex-col items-center justify-center space-y-12">
-      {/* Loading Overlay */}
       {loading && (
         <div className="fixed inset-0 bg-background/80 backdrop-blur-sm flex items-center justify-center z-50 animate-fade-in-up">
           <div className="bg-card border border-border/50 p-8 rounded-2xl shadow-2xl max-w-sm w-full mx-4">
@@ -136,7 +368,6 @@ export const ThumbnailCreator = () => {
         </div>
       )}
 
-      {/* Preview Section */}
       {imageSrc && !loading && (
         <div className="w-full max-w-4xl space-y-8 animate-fade-in-up">
           <div className="text-center space-y-3">
@@ -147,46 +378,82 @@ export const ThumbnailCreator = () => {
             <p className="text-muted-foreground">Your thumbnail has been processed and is ready for download</p>
           </div>
 
-          {/* Main Canvas Preview */}
           <div className="relative group">
             <div className="absolute -inset-1 bg-gradient-to-r from-primary/20 to-accent/20 rounded-2xl blur opacity-25 group-hover:opacity-50 transition duration-300" />
-            <div className="relative bg-card border border-border/50 rounded-2xl p-6 shadow-xl">
+            <div className="relative rounded-2xl p-6 shadow-xl">
               <canvas ref={canvasRef} className="w-full rounded-xl shadow-lg bg-white" />
             </div>
           </div>
 
-          {/* Before/After Comparison */}
-          {processedImageSrc && (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="group relative">
-                <div className="absolute -inset-1 bg-gradient-to-r from-muted/50 to-accent/30 rounded-xl blur opacity-25 group-hover:opacity-50 transition duration-300" />
-                <div className="relative bg-card border border-border/50 rounded-xl p-4 shadow-lg">
-                  <div className="flex items-center space-x-2 mb-3">
-                    <ImageIcon className="w-4 h-4 text-muted-foreground" />
-                    <p className="text-sm font-medium text-muted-foreground">Original</p>
-                  </div>
-                  <img src={imageSrc || "/placeholder.svg"} alt="Original" className="w-full rounded-lg shadow-sm" />
-                </div>
+          <div className="space-y-6">
+            <div className="text-center space-y-2">
+              <div className="inline-flex items-center space-x-2 bg-primary/10 text-primary px-3 py-1.5 rounded-full text-sm font-medium">
+                <Palette className="w-4 h-4" />
+                <span>Text Styles</span>
               </div>
-
-              <div className="group relative">
-                <div className="absolute -inset-1 bg-gradient-to-r from-primary/30 to-accent/30 rounded-xl blur opacity-25 group-hover:opacity-50 transition duration-300" />
-                <div className="relative bg-card border border-border/50 rounded-xl p-4 shadow-lg">
-                  <div className="flex items-center space-x-2 mb-3">
-                    <Sparkles className="w-4 h-4 text-primary" />
-                    <p className="text-sm font-medium text-foreground">Processed</p>
-                  </div>
-                  <img
-                    src={processedImageSrc || "/placeholder.svg"}
-                    alt="Processed cutout"
-                    className="w-full rounded-lg shadow-sm bg-transparent"
-                  />
-                </div>
-              </div>
+              <h3 className="text-xl font-semibold text-foreground">Choose Your Style</h3>
+              <p className="text-sm text-muted-foreground">Select a preset to customize your thumbnail text</p>
             </div>
-          )}
 
-          {/* Download Button */}
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 max-w-4xl mx-auto">
+              {Object.entries(PRESETS).map(([key, preset]) => (
+                <Button
+                  key={key}
+                  onClick={() => setPresetKey(key as keyof typeof PRESETS)}
+                  className={cn(
+                    "group relative overflow-hidden rounded-xl p-4 transition-all duration-300",
+                    "border-2 hover:scale-105 hover:shadow-lg",
+                    presetKey === key
+                      ? "border-primary shadow-md"
+                      : "border-border/50 bg-card hover:border-primary/50 hover:bg-primary/5",
+                  )}
+                >
+                  <div className=" flex flex-col items-center space-y-3">
+                    <div className="relative">
+                      <div
+                        className="w-20 h-3 rounded-full shadow-lg "
+                        style={{
+                          backgroundColor: preset.color || '#ffffff',
+                          boxShadow: preset.shadowColor ? `0 0 20px ${preset.shadowColor}` : 'none',
+                          opacity: preset.opacity || 1,
+                        }}
+                      />
+                      {presetKey === key && (
+                        <div className="absolute -inset-1 rounded-full border-2 border-primary animate-pulse" />
+                      )}
+                    </div>
+
+                    {/* <div className="text-center">
+                      <p className="text-xs font-medium text-foreground group-hover:text-primary transition-colors">
+                        {preset.name}
+                      </p>
+                    </div> */}
+                  </div>
+
+                  {presetKey === key && (
+                    <div className="absolute top-2 right-2">
+                      <CheckCircle className="w-4 h-4 text-primary" />
+                    </div>
+                  )}
+                </Button>
+              ))}
+            </div>
+
+            <div className="max-w-md mx-auto">
+              <label htmlFor="thumbnail-text" className="block text-sm font-medium text-foreground mb-2">
+                What would you like to write...
+              </label>
+              <Input
+                id="thumbnail-text"
+                type="text"
+                value={text}
+                onChange={(e) => setText(e.target.value)}
+                placeholder="Enter your text..."
+                className="w-full px-4 py-3 rounded-xl border border-border/50 bg-card text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all duration-200"
+              />
+            </div>
+          </div>
+
           <div className="flex justify-center">
             <Button
               size="lg"
@@ -212,14 +479,12 @@ export const ThumbnailCreator = () => {
         </div>
       )}
 
-      {/* Upload Section */}
       {!imageSrc && (
         <div className="w-full max-w-2xl mx-auto animate-fade-in-up">
           <Dropzone setFile={(files) => setSelectedImage(files?.[0])} />
         </div>
       )}
 
-      {/* Error Display */}
       {error && (
         <div className="max-w-md mx-auto p-4 bg-destructive/10 border border-destructive/20 rounded-xl animate-fade-in-up">
           <p className="text-sm text-destructive text-center" role="alert">
