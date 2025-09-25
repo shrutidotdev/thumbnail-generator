@@ -9,6 +9,9 @@ import { Download, Sparkles, CheckCircle, Palette } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Input } from "@/components/ui/input"
 
+import { Inter, AR_One_Sans, Acme, Akronim, Alef, Ruslan_Display, } from "next/font/google"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+
 type TextPreset = {
   name: string
   fontSize: number
@@ -247,6 +250,16 @@ export const ThumbnailCreator = () => {
   const [processingStep, setProcessingStep] = useState<string>("")
   const [presetKey, setPresetKey] = useState<keyof typeof PRESETS>("sunsetGlow")
   const [text, setText] = useState("POV")
+  // Font selection
+  const FONT_OPTIONS = [
+    { key: 'arial',  label: 'Arial',        stack: 'Arial, Helvetica, sans-serif' },
+    { key: 'impact', label: 'Impact',       stack: 'Impact, Haettenschweiler, "Arial Black", sans-serif' },
+    { key: 'inter',  label: 'Inter',        stack: 'Inter, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif' },
+    { key: 'domine', label: 'Domine',       stack: 'Domine, Georgia, "Times New Roman", serif' },
+    { key: 'bebas',  label: 'Bebas Neue',   stack: '"Bebas Neue", Impact, "Arial Black", sans-serif' },
+    { key: 'mono',   label: 'Monospace',    stack: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace' },
+  ] as const
+  const [fontKey, setFontKey] = useState<typeof FONT_OPTIONS[number]['key']>('arial')
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
   const setSelectedImage = async (file?: File) => {
@@ -305,7 +318,7 @@ export const ThumbnailCreator = () => {
 
       const baseSize = activePreset.fontSize || 100
       const fontWeight = activePreset.fontWeight || "bold"
-      const fontFamily = "Arial"
+      const fontFamily = FONT_OPTIONS.find(f => f.key === fontKey)?.stack || 'Arial, Helvetica, sans-serif'
 
       ctx.font = `${fontWeight} ${baseSize}px ${fontFamily}`
       const measured = ctx.measureText(text).width
@@ -344,8 +357,16 @@ export const ThumbnailCreator = () => {
 
   useEffect(() => {
     if (canvasReady) drawCompositeImage()
-  }, [canvasReady, imageSrc, processedImageSrc, text, presetKey])
+  }, [canvasReady, imageSrc, processedImageSrc, text, presetKey, fontKey])
 
+  function downloadImg() {
+    if (canvasRef.current) {
+      const link = document.createElement("a")
+      link.download = "thumbnail.png"
+      link.href = canvasRef.current?.toDataURL() ?? ""
+      link.click()
+    }
+  }
   return (
     <section className="w-full flex flex-col items-center justify-center space-y-12">
       {loading && (
@@ -439,7 +460,9 @@ export const ThumbnailCreator = () => {
               ))}
             </div>
 
+            {/* Input area */}
             <div className="max-w-md mx-auto">
+              {/* text to write  */}
               <label htmlFor="thumbnail-text" className="block text-sm font-medium text-foreground mb-2">
                 What would you like to write...
               </label>
@@ -451,11 +474,27 @@ export const ThumbnailCreator = () => {
                 placeholder="Enter your text..."
                 className="w-full px-4 py-3 rounded-xl border border-border/50 bg-card text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all duration-200"
               />
+
+              {/* Font selector */}
+              <div className="mt-4">
+                <label className="block text-sm font-medium text-foreground mb-2">Font</label>
+                <Select value={fontKey} onValueChange={(v) => setFontKey(v as typeof fontKey)}>
+                  <SelectTrigger className="w-[220px]">
+                    <SelectValue placeholder="Choose font" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {FONT_OPTIONS.map((f) => (
+                      <SelectItem key={f.key} value={f.key}>{f.label}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
           </div>
 
           <div className="flex justify-center">
             <Button
+              onClick={() => downloadImg()}
               size="lg"
               className={cn(
                 "px-8 py-3 text-base font-semibold",
@@ -464,12 +503,7 @@ export const ThumbnailCreator = () => {
                 "transition-all duration-300",
                 "group relative overflow-hidden",
               )}
-              onClick={() => {
-                const link = document.createElement("a")
-                link.download = "thumbnail.png"
-                link.href = canvasRef.current?.toDataURL() ?? ""
-                link.click()
-              }}
+
             >
               <div className="absolute inset-0 bg-gradient-to-r from-primary to-primary/80 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               <Download className="w-5 h-5 mr-2 relative z-10" />
