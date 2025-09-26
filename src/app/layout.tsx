@@ -10,8 +10,7 @@ import {
 import { Geist, Geist_Mono } from 'next/font/google'
 import './globals.css'
 import { Button } from '@/components/ui/button'
-import { auth, currentUser } from '@clerk/nextjs/server';
-import { redirect } from 'next/navigation';
+
 import { AuthWelcome } from './utils/auth-welcome'
 
 const geistSans = Geist({
@@ -39,14 +38,18 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="en">
         <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-          <header className='flex justify-end items-center p-4 gap-4 '>
+          <header className='flex justify-end items-center p-4 '>
             
             <AuthWelcome />
-            <div className="flex items-center gap-4 justify-center">
+            <div className="flex items-center  justify-center ">
               <SignedOut>
-                <SignInButton />
+                <SignInButton>
+                  <Button  className="text-white hover:bg-white/10 hover:text-white transition-all duration-300">
+                    Sign In
+                  </Button>
+                </SignInButton>
                 <SignUpButton>
-                  <Button>
+                  <Button  className="text-white hover:bg-white/10 hover:text-white transition-all duration-300">
                     Sign Up
                   </Button>
                 </SignUpButton>

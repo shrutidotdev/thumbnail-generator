@@ -37,7 +37,7 @@ export default async function OutOfCredits() {
     
               <CardContent className="text-center space-y-6 px-6 sm:px-8 pb-8">
                 <div className="space-y-3">
-                  <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 text-balance">You're out of credits!</h2>
+                  <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 text-balance">You&apos;re out of credits!</h2>
                   <p className="text-gray-600 text-base leading-relaxed max-w-sm mx-auto">
                     Buy more credits to continue generating amazing thumbnails.
                   </p>
