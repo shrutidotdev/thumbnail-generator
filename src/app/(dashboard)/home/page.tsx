@@ -4,11 +4,11 @@ import { ThumbnailCreator } from "../../components/thumbnail-creator"
 import Divider from "../../components/divider"
 import { StyleDecorative } from "../../components/style-decorative"
 import { Sparkles, Zap, ImageIcon } from "lucide-react"
-import RecentThumbnail from "@/app/components/Recent-thumbnail"
+// import RecentThumbnail from "@/app/components/Recent-thumbnail"
 
 export default function HomeThumbnailGenerator() {
   return (
-    <div className="min-h-screen w-full bg-gradient-to-br from-orange-400 via-black to-accent rounded-3xl">
+    <div className="min-h-screen w-full bg-gradient-to-br from-orange-400 via-black to-accent rounded-3xl ">
       <div className="container bg-gradient-to-tl from-orange-400 via-black to-accent/5 mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-20">
         <div className="max-w-7xl mx-auto space-y-16 sm:space-y-20 lg:space-y-24">
           {/* Header Section */}
@@ -76,9 +76,9 @@ export default function HomeThumbnailGenerator() {
                 </p>
               </div>
 
-              <ThumbnailCreator>
-                <RecentThumbnail />
-              </ThumbnailCreator>
+              {/* <ThumbnailCreator> */}
+                {/* <RecentThumbnail /> */}
+              <ThumbnailCreator />
             </section>
           </main>
         </div>

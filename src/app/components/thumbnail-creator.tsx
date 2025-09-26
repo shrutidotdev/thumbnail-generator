@@ -270,7 +270,7 @@ const PRESETS: Record<string, TextPreset> = {
   },
 }
 
-export const ThumbnailCreator = ({ children }: { children: React.ReactNode }) => {
+export const ThumbnailCreator = () => {
   const [loading, setLoading] = useState(false)
   const [imageSrc, setImageSrc] = useState<string | null>(null)
   const [processedImageSrc, setProcessedImageSrc] = useState<string | null>(null)
@@ -586,7 +586,7 @@ export const ThumbnailCreator = ({ children }: { children: React.ReactNode }) =>
         </div>
       )}
 
-      <div>{children}</div>
+      {/* <div>{children}</div> */}
     </section>
   )
 }
