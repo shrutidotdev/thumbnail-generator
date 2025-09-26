@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useRef, useState } from "react"
+import React, { useEffect, useRef, useState } from "react"
 import { Dropzone } from "./dropzone"
 import { Button } from "@/components/ui/button"
 import LoadingSpinner from "./loading"
@@ -13,29 +13,29 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Inter, Bebas_Neue, Oswald, Righteous, Francois_One } from "next/font/google"
 
 // Configure the fonts
-const inter = Inter({ 
+const inter = Inter({
   subsets: ['latin'],
   display: 'swap',
 })
 
-const bebasNeue = Bebas_Neue({ 
-  subsets: ['latin'],
-  weight: '400',
-  display: 'swap',
-})
-
-const oswald = Oswald({ 
-  subsets: ['latin'],
-  display: 'swap',
-})
-
-const righteous = Righteous({ 
+const bebasNeue = Bebas_Neue({
   subsets: ['latin'],
   weight: '400',
   display: 'swap',
 })
 
-const fredokaOne = Francois_One({ 
+const oswald = Oswald({
+  subsets: ['latin'],
+  display: 'swap',
+})
+
+const righteous = Righteous({
+  subsets: ['latin'],
+  weight: '400',
+  display: 'swap',
+})
+
+const fredokaOne = Francois_One({
   subsets: ['latin'],
   weight: '400',
   display: 'swap',
@@ -270,7 +270,7 @@ const PRESETS: Record<string, TextPreset> = {
   },
 }
 
-export const ThumbnailCreator = () => {
+export const ThumbnailCreator = ({ children }: { children: React.ReactNode }) => {
   const [loading, setLoading] = useState(false)
   const [imageSrc, setImageSrc] = useState<string | null>(null)
   const [processedImageSrc, setProcessedImageSrc] = useState<string | null>(null)
@@ -279,51 +279,51 @@ export const ThumbnailCreator = () => {
   const [processingStep, setProcessingStep] = useState<string>("")
   const [presetKey, setPresetKey] = useState<keyof typeof PRESETS>("sunsetGlow")
   const [text, setText] = useState("POV")
-  
+
   //  font options with Google Fonts
   const FONT_OPTIONS = [
-    { 
-      key: 'arial', 
-      label: 'Arial', 
-      stack: 'Arial, Helvetica, sans-serif' 
+    {
+      key: 'arial',
+      label: 'Arial',
+      stack: 'Arial, Helvetica, sans-serif'
     },
-    { 
-      key: 'impact', 
-      label: 'Impact', 
-      stack: 'Impact, Haettenschweiler, "Arial Black", sans-serif' 
+    {
+      key: 'impact',
+      label: 'Impact',
+      stack: 'Impact, Haettenschweiler, "Arial Black", sans-serif'
     },
-    { 
-      key: 'inter', 
-      label: 'Inter', 
-      stack: `${inter.style.fontFamily}, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif` 
+    {
+      key: 'inter',
+      label: 'Inter',
+      stack: `${inter.style.fontFamily}, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif`
     },
-    { 
-      key: 'bebas', 
-      label: 'Bebas Neue', 
-      stack: `${bebasNeue.style.fontFamily}, Impact, "Arial Black", sans-serif` 
+    {
+      key: 'bebas',
+      label: 'Bebas Neue',
+      stack: `${bebasNeue.style.fontFamily}, Impact, "Arial Black", sans-serif`
     },
-    { 
-      key: 'oswald', 
-      label: 'Oswald', 
-      stack: `${oswald.style.fontFamily}, Impact, "Arial Black", sans-serif` 
+    {
+      key: 'oswald',
+      label: 'Oswald',
+      stack: `${oswald.style.fontFamily}, Impact, "Arial Black", sans-serif`
     },
-    { 
-      key: 'righteous', 
-      label: 'Righteous', 
-      stack: `${righteous.style.fontFamily}, Impact, "Arial Black", sans-serif` 
+    {
+      key: 'righteous',
+      label: 'Righteous',
+      stack: `${righteous.style.fontFamily}, Impact, "Arial Black", sans-serif`
     },
-    { 
-      key: 'fredoka', 
-      label: 'Fredoka One', 
-      stack: `${fredokaOne.style.fontFamily}, Impact, "Arial Black", sans-serif` 
+    {
+      key: 'fredoka',
+      label: 'Fredoka One',
+      stack: `${fredokaOne.style.fontFamily}, Impact, "Arial Black", sans-serif`
     },
-    { 
-      key: 'mono', 
-      label: 'Monospace', 
-      stack: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace' 
+    {
+      key: 'mono',
+      label: 'Monospace',
+      stack: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace'
     },
   ] as const
-  
+
   const [fontKey, setFontKey] = useState<typeof FONT_OPTIONS[number]['key']>('arial')
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
@@ -523,7 +523,7 @@ export const ThumbnailCreator = () => {
             {/* Input area */}
             <div className="max-w-md mx-auto">
               {/* text to write  */}
-              <label htmlFor="thumbnail-text" className="block text-sm font-medium text-foreground mb-2">
+              <label htmlFor="thumbnail-text" className="block text-sm font-medium text-foreground mb-2 text-white">
                 What would you like to write...
               </label>
               <Input
@@ -537,7 +537,7 @@ export const ThumbnailCreator = () => {
 
               {/* Font selector */}
               <div className="mt-4">
-                <label className="block text-sm font-medium text-foreground mb-2">Font</label>
+                <label className="block text-sm font-medium text-foreground mb-2 text-white">Font</label>
                 <Select value={fontKey} onValueChange={(v) => setFontKey(v as typeof fontKey)}>
                   <SelectTrigger className="w-[220px]">
                     <SelectValue placeholder="Choose font" />
@@ -557,10 +557,10 @@ export const ThumbnailCreator = () => {
               onClick={() => downloadImg()}
               size="lg"
               className={cn(
-                "px-8 py-3 text-base font-semibold",
-                "bg-primary hover:bg-primary/90",
-                "shadow-lg hover:shadow-xl",
-                "transition-all duration-300",
+                "px-8 py-3 text-base font-bold",
+                "bg-white text-black cursor-pointer",
+                "shadow-lg hover:shadow-xl hover:text-white hover:bg-gradient-to-br from-orange-400 via-black to-accent",
+                "transition-all duration-300 ",
                 "group relative overflow-hidden",
               )}
             >
@@ -585,6 +585,8 @@ export const ThumbnailCreator = () => {
           </p>
         </div>
       )}
+
+      <div>{children}</div>
     </section>
   )
 }

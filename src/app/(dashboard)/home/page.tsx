@@ -4,6 +4,7 @@ import { ThumbnailCreator } from "../../components/thumbnail-creator"
 import Divider from "../../components/divider"
 import { StyleDecorative } from "../../components/style-decorative"
 import { Sparkles, Zap, ImageIcon } from "lucide-react"
+import RecentThumbnail from "@/app/components/Recent-thumbnail"
 
 export default function HomeThumbnailGenerator() {
   return (
@@ -75,7 +76,9 @@ export default function HomeThumbnailGenerator() {
                 </p>
               </div>
 
-              <ThumbnailCreator />
+              <ThumbnailCreator>
+                <RecentThumbnail />
+              </ThumbnailCreator>
             </section>
           </main>
         </div>
