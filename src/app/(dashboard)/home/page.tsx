@@ -8,8 +8,8 @@ import { Sparkles, Zap, ImageIcon } from "lucide-react"
 
 export default function HomeThumbnailGenerator() {
   return (
-    <div className="min-h-screen w-full bg-gradient-to-br from-orange-400 via-black to-accent rounded-3xl ">
-      <div className="container bg-gradient-to-tl from-orange-400 via-black to-accent/5 mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-20">
+    <div className="min-h-screen w-full bg-gradient-to-br from-orange-400 to-black rounded-3xl ">
+      <div className="container  mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-20">
         <div className="max-w-7xl mx-auto space-y-16 sm:space-y-20 lg:space-y-24">
           {/* Header Section */}
           <header className="text-center space-y-6 animate-fade-in-up">
@@ -30,7 +30,7 @@ export default function HomeThumbnailGenerator() {
           </header>
 
           {/* Main Content Area */}
-          <main className="bg-black backdrop-blur-sm rounded-3xl shadow-2xl border border-border/50 overflow-hidden">
+          <main className="bg-black/10 backdrop-blur-lg rounded-3xl shadow-2xl overflow-hidden">
             {/* Template Gallery Section */}
             <section className="p-8 sm:p-12 lg:p-16 bg-gradient-to-br from-accent/30 via-background to-accent/20">
               <div className="text-center mb-12">
@@ -47,14 +47,13 @@ export default function HomeThumbnailGenerator() {
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-5xl mx-auto">
-                <div className="transform hover:scale-105 transition-all duration-500">
-                  <StyleDecorative image="/creative-thumbnail-layout.jpg" />                </div>
-                <div className="transform hover:scale-105 transition-all duration-500 delay-100">
-                  <StyleDecorative image="/thumbnail-preview-template.jpg" />
-                </div>
-                <div className="transform hover:scale-105 transition-all duration-500 delay-200">
-                  <StyleDecorative image="/creative-thumbnail-layout.jpg" />
-                </div>
+                <StyleDecorative image="/thumbnail.png" />
+                <StyleDecorative image="/thumbnail2.png" />
+                <StyleDecorative image="/thumbnail4.png" />
+                <StyleDecorative image="/thumbnail5.png" />
+                <StyleDecorative image="/thumbnail3.png" />
+                <StyleDecorative image="/thumbnail1.png" />
+
               </div>
             </section>
 
@@ -77,7 +76,7 @@ export default function HomeThumbnailGenerator() {
               </div>
 
               {/* <ThumbnailCreator> */}
-                {/* <RecentThumbnail /> */}
+              {/* <RecentThumbnail /> */}
               <ThumbnailCreator />
             </section>
           </main>

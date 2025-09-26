@@ -446,8 +446,8 @@ export const ThumbnailCreator = () => {
                 <div className="absolute -inset-2 bg-primary/20 rounded-full animate-ping" />
               </div>
               <div className="text-center space-y-2">
-                <h3 className="text-lg font-semibold text-foreground">Processing Image</h3>
-                <p className="text-sm text-muted-foreground">{processingStep || "Please wait..."}</p>
+                <h3 className="text-lg font-semibold text-white">Processing Image</h3>
+                <p className="text-sm text-muted">{processingStep || "Please wait..."}</p>
               </div>
               <LoadingSpinner />
             </div>
@@ -460,9 +460,9 @@ export const ThumbnailCreator = () => {
           <div className="text-center space-y-3">
             <div className="flex items-center justify-center space-x-2">
               <CheckCircle className="w-5 h-5 text-green-500" />
-              <h3 className="text-2xl font-bold text-foreground">Preview Ready</h3>
+              <h3 className="text-2xl font-bold text-white">Preview Ready</h3>
             </div>
-            <p className="text-muted-foreground">Your thumbnail has been processed and is ready for download</p>
+            <p className="text-muted">Your thumbnail has been processed and is ready for download</p>
           </div>
 
           <div className="relative group">
@@ -472,14 +472,32 @@ export const ThumbnailCreator = () => {
             </div>
           </div>
 
+           <div className="flex justify-center">
+            <Button
+              onClick={() => downloadImg()}
+              size="lg"
+              className={cn(
+                "px-8 py-3 text-base font-bold",
+                "bg-white text-black cursor-pointer",
+                "shadow-lg hover:shadow-xl hover:text-white hover:bg-gradient-to-br from-orange-400 via-black to-accent",
+                "transition-all duration-300 ",
+                "group relative overflow-hidden",
+              )}
+            >
+              <div className="absolute inset-0 bg-gradient-to-r from-primary to-primary/80 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              <Download className="w-5 h-5 mr-2 relative z-10" />
+              <span className="relative z-10">Download Thumbnail</span>
+            </Button>
+          </div>
+
           <div className="space-y-6">
             <div className="text-center space-y-2">
               <div className="inline-flex items-center space-x-2 bg-primary/10 text-primary px-3 py-1.5 rounded-full text-sm font-medium">
                 <Palette className="w-4 h-4" />
                 <span>Text Styles</span>
               </div>
-              <h3 className="text-xl font-semibold text-foreground">Choose Your Style</h3>
-              <p className="text-sm text-muted-foreground">Select a preset to customize your thumbnail text</p>
+              <h3 className="text-xl font-semibold text-white">Choose Your Style</h3>
+              <p className="text-md text-white tracking-wide">Select a preset to customize your thumbnail text</p>
             </div>
 
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 max-w-4xl mx-auto">
@@ -520,10 +538,12 @@ export const ThumbnailCreator = () => {
               ))}
             </div>
 
+           
+
             {/* Input area */}
             <div className="max-w-md mx-auto">
               {/* text to write  */}
-              <label htmlFor="thumbnail-text" className="block text-sm font-medium text-foreground mb-2 text-white">
+              <label htmlFor="thumbnail-text" className="block text-sm font-medium mb-2 text-white">
                 What would you like to write...
               </label>
               <Input
@@ -532,12 +552,12 @@ export const ThumbnailCreator = () => {
                 value={text}
                 onChange={(e) => setText(e.target.value)}
                 placeholder="Enter your text..."
-                className="w-full px-4 py-3 rounded-xl border border-border/50 bg-card text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all duration-200"
+                className="w-full px-4 py-3 rounded-xl border border-border/50 bg-card text-black font-bold placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all duration-200"
               />
 
               {/* Font selector */}
               <div className="mt-4">
-                <label className="block text-sm font-medium text-foreground mb-2 text-white">Font</label>
+                <label className="block text-sm font-medium  mb-2 text-white">Font</label>
                 <Select value={fontKey} onValueChange={(v) => setFontKey(v as typeof fontKey)}>
                   <SelectTrigger className="w-[220px]">
                     <SelectValue placeholder="Choose font" />
@@ -552,23 +572,7 @@ export const ThumbnailCreator = () => {
             </div>
           </div>
 
-          <div className="flex justify-center">
-            <Button
-              onClick={() => downloadImg()}
-              size="lg"
-              className={cn(
-                "px-8 py-3 text-base font-bold",
-                "bg-white text-black cursor-pointer",
-                "shadow-lg hover:shadow-xl hover:text-white hover:bg-gradient-to-br from-orange-400 via-black to-accent",
-                "transition-all duration-300 ",
-                "group relative overflow-hidden",
-              )}
-            >
-              <div className="absolute inset-0 bg-gradient-to-r from-primary to-primary/80 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-              <Download className="w-5 h-5 mr-2 relative z-10" />
-              <span className="relative z-10">Download Thumbnail</span>
-            </Button>
-          </div>
+          
         </div>
       )}
 
