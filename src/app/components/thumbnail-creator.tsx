@@ -270,7 +270,7 @@ const PRESETS: Record<string, TextPreset> = {
   },
 }
 
-export const ThumbnailCreator = () => {
+export const ThumbnailCreator = ({ children }: { children: React.ReactNode }) => {
   const [loading, setLoading] = useState(false)
   const [imageSrc, setImageSrc] = useState<string | null>(null)
   const [processedImageSrc, setProcessedImageSrc] = useState<string | null>(null)
@@ -446,8 +446,8 @@ export const ThumbnailCreator = () => {
                 <div className="absolute -inset-2 bg-primary/20 rounded-full animate-ping" />
               </div>
               <div className="text-center space-y-2">
-                <h3 className="text-lg font-semibold text-white">Processing Image</h3>
-                <p className="text-sm text-muted">{processingStep || "Please wait..."}</p>
+                <h3 className="text-lg font-semibold text-black">Processing Image</h3>
+                <p className="text-sm text-black">{processingStep || "Please wait..."}</p>
               </div>
               <LoadingSpinner />
             </div>
@@ -590,7 +590,7 @@ export const ThumbnailCreator = () => {
         </div>
       )}
 
-      {/* <div>{children}</div> */}
+      <div>{children}</div>
     </section>
   )
 }

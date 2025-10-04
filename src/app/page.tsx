@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button"
 import { ImageIcon, Sparkles, Zap, ArrowRight, Check } from "lucide-react"
+import Image from "next/image"
 import Link from "next/link"
 
 export default function HomePage() {
@@ -77,7 +78,7 @@ export default function HomePage() {
           {/* Features Section */}
           <section id="features" className="py-20">
             <div className="bg-black/40 backdrop-blur-xl rounded-3xl shadow-2xl border border-orange-400/20 overflow-hidden">
-              <div className="p-12 sm:p-16 lg:p-20">
+              <div className="p-12 sm:p-16 lg:p-20 space-y-10">
                 <div className="text-center mb-16">
                   <div className="inline-flex items-center space-x-2 bg-orange-500/20 backdrop-blur-sm text-white px-6 py-3 rounded-full text-sm font-semibold mb-6 border border-orange-400/30">
                     <ImageIcon className="w-4 h-4" />
@@ -120,6 +121,37 @@ export default function HomePage() {
                     <p className="text-white/70 text-lg leading-relaxed">
                       Generate professional thumbnails in seconds, ready for your content
                     </p>
+                  </div>
+                </div>
+
+                {/* Images  */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+                  <div className="text-center space-y-6 p-8 rounded-2xl border border-orange-400/20 bg-black/20 backdrop-blur-sm transform hover:scale-105 transition-all duration-500 hover:border-orange-400/40">
+
+                    <Image
+                      alt="Image"
+                      width={500}
+                      height={500}
+                      src={"/thumbnail.png"}
+                    />
+                  </div>
+
+                  <div className="text-center space-y-6 p-8 rounded-2xl border border-orange-400/20 bg-black/20 backdrop-blur-sm transform hover:scale-105 transition-all duration-500 delay-100 hover:border-orange-400/40">
+                    <Image
+                      alt="Image"
+                      width={500}
+                      height={500}
+                      src={"/thumbnail2.png"}
+                    />
+                  </div>
+
+                  <div className="text-center space-y-6 p-8 rounded-2xl border border-orange-400/20 bg-black/backdrop-blur-sm transform hover:scale-105 transition-all duration-500 delay-200 hover:border-orange-400/40">
+                    <Image
+                      alt="Image"
+                      width={500}
+                      height={500}
+                      src={"/thumbnail4.png"}
+                    />
                   </div>
                 </div>
               </div>

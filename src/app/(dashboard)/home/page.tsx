@@ -1,9 +1,11 @@
-"use client"
-
 import { ThumbnailCreator } from "../../components/thumbnail-creator"
 import Divider from "../../components/divider"
 import { StyleDecorative } from "../../components/style-decorative"
 import { Sparkles, Zap, ImageIcon } from "lucide-react"
+import RecentThumbnail from "@/app/components/Recent-thumbnail"
+import WelcomePage from "@/app/components/welcomepage"
+import { motion } from "framer-motion";
+
 // import RecentThumbnail from "@/app/components/Recent-thumbnail"
 
 export default function HomeThumbnailGenerator() {
@@ -12,7 +14,7 @@ export default function HomeThumbnailGenerator() {
       <div className="container  mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-20">
         <div className="max-w-7xl mx-auto space-y-16 sm:space-y-20 lg:space-y-24">
           {/* Header Section */}
-          <header className="text-center space-y-6 animate-fade-in-up">
+          {/* <header className="text-center space-y-6 animate-fade-in-up">
             <div className="space-y-4">
               <div className="inline-flex items-center space-x-2 bg-primary/10 text-white px-4 py-2 rounded-full text-sm font-medium">
                 <Sparkles className="w-4 h-4" />
@@ -27,7 +29,9 @@ export default function HomeThumbnailGenerator() {
                 Transform your images into professional thumbnails with AI-powered background removal
               </p>
             </div>
-          </header>
+          </header> */}
+
+          <WelcomePage />
 
           {/* Main Content Area */}
           <main className="bg-black/10 backdrop-blur-lg rounded-3xl shadow-2xl overflow-hidden">
@@ -64,7 +68,7 @@ export default function HomeThumbnailGenerator() {
 
             {/* Thumbnail Creator Section */}
             <section className="p-8 sm:p-12 lg:p-16">
-              <div className="text-center mb-12 space-y-4">
+              {/* <div className="text-center mb-12 space-y-4">
                 <div className="inline-flex items-center space-x-2 bg-primary/10 text-white px-4 py-2 rounded-full text-sm font-medium">
                   <Zap className="w-4 h-4" />
                   <span>AI Processing</span>
@@ -73,15 +77,16 @@ export default function HomeThumbnailGenerator() {
                 <p className="text-white text-lg max-w-2xl mx-auto leading-relaxed text-pretty">
                   Drop your image below and watch our AI remove the background and create the perfect thumbnail
                 </p>
-              </div>
+              </div> */}
 
-              {/* <ThumbnailCreator> */}
-              {/* <RecentThumbnail /> */}
-              <ThumbnailCreator />
+              <ThumbnailCreator>
+                <RecentThumbnail />
+              </ThumbnailCreator>
             </section>
           </main>
+          </div>
         </div>
-      </div>
-    </div>
-  )
+      </div >
+    )
 }
+
