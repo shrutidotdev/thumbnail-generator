@@ -417,7 +417,7 @@ export const ThumbnailCreator = ({ children }: { children: React.ReactNode }) =>
       alert('Thumbnail saved successfully!');
 
     } catch (err: unknown) {
-      setError(err.message || 'Failed to save thumbnail');
+      setError(err instanceof Error ? err.message : 'Failed to save thumbnail');
       console.error(err);
     } finally {
       setSaving(false);
