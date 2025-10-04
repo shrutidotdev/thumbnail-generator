@@ -9,8 +9,9 @@ import { Download, Sparkles, CheckCircle, Palette } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-
+import { useAuth } from '@clerk/nextjs';
 import { Inter, Bebas_Neue, Oswald, Righteous, Francois_One } from "next/font/google"
+// import { toast } from "sonner"
 
 // Configure the fonts
 const inter = Inter({
@@ -279,6 +280,9 @@ export const ThumbnailCreator = ({ children }: { children: React.ReactNode }) =>
   const [processingStep, setProcessingStep] = useState<string>("")
   const [presetKey, setPresetKey] = useState<keyof typeof PRESETS>("sunsetGlow")
   const [text, setText] = useState("POV")
+  const [thumbnailId, setThumbnailId] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
+  const { userId } = useAuth();
 
   //  font options with Google Fonts
   const FONT_OPTIONS = [
@@ -327,35 +331,98 @@ export const ThumbnailCreator = ({ children }: { children: React.ReactNode }) =>
   const [fontKey, setFontKey] = useState<typeof FONT_OPTIONS[number]['key']>('arial')
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
+  // Update setSelectedImage function
   const setSelectedImage = async (file?: File) => {
-    if (file) {
-      setLoading(true)
-      setError(null)
-      setProcessedImageSrc(null)
-      setProcessingStep("Uploading image...")
+    if (file && userId) {
+      setLoading(true);
+      setError(null);
+      setProcessedImageSrc(null);
+      setProcessingStep("Uploading image...");
 
-      const reader = new FileReader()
-      reader.onload = async (e) => {
-        const src = e.target?.result as string
-        setImageSrc(src)
+      try {
+        // 1. Upload to blob via API
+        const formData = new FormData();
+        formData.append('file', file);
 
-        try {
-          setProcessingStep("Removing background...")
-          const blob = await removeBackground(src)
-          const processedImageUrl = URL.createObjectURL(blob)
-          setProcessedImageSrc(processedImageUrl)
-          setCanvasReady(true)
-          setProcessingStep("Complete!")
-        } catch (err) {
-          setError("Failed to process image. Please try another image.")
-        } finally {
-          setLoading(false)
-          setProcessingStep("")
+        const uploadResponse = await fetch('/api/upload', {
+          method: 'POST',
+          body: formData,
+        });
+
+        if (!uploadResponse.ok) {
+          const error = await uploadResponse.json();
+          throw new Error(error.error || 'Upload failed');
+        }
+
+        const uploadData = await uploadResponse.json();
+        setThumbnailId(uploadData.thumbnailId);
+        setImageSrc(uploadData.originalImageUrl);
+
+        // 2. Process image (background removal)
+        setProcessingStep("Removing background...");
+        const blob = await removeBackground(uploadData.originalImageUrl);
+        const processedImageUrl = URL.createObjectURL(blob);
+        setProcessedImageSrc(processedImageUrl);
+        setCanvasReady(true);
+        setProcessingStep("Complete!");
+
+      } catch (err: unknown) {
+        if (err instanceof Error) {
+          setError(err.message)
+          console.error(err)
+        } else {
+          setError("Unknown error occurred")
+          console.error("Unknown error:", err)
         }
       }
-      reader.readAsDataURL(file)
     }
-  }
+  };
+
+  // Add function to save thumbnail
+  const saveThumbnail = async () => {
+    if (!canvasRef.current || !thumbnailId) return;
+
+    setSaving(true);
+    setError(null);
+
+    try {
+      // Get canvas data as base64
+      const dataUrl = canvasRef.current.toDataURL('image/png');
+
+      // Save to database and blob
+      const response = await fetch('/api/save', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          thumbnailId: thumbnailId,
+          dataUrl: dataUrl,
+          settings: {
+            text: text,
+            preset: presetKey,
+            font: fontKey,
+          },
+          originalFilename: imageSrc?.split('/').pop() || 'thumbnail',
+        }),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Save failed');
+      }
+
+      const data = await response.json();
+      console.log('Thumbnail saved:', data.thumbnail);
+
+      // Show success message or redirect
+      alert('Thumbnail saved successfully!');
+
+    } catch (err: any) {
+      setError(err.message || 'Failed to save thumbnail');
+      console.error(err);
+    } finally {
+      setSaving(false);
+    }
+  };
 
   const drawCompositeImage = () => {
     if (!canvasRef.current || !imageSrc) return
@@ -370,6 +437,9 @@ export const ThumbnailCreator = ({ children }: { children: React.ReactNode }) =>
 
     const activePreset = PRESETS[presetKey]
     const bg = new Image()
+
+    // Enable CORS
+    bg.crossOrigin = "anonymous"
 
     bg.onload = () => {
       canvas.width = bg.width
@@ -407,6 +477,9 @@ export const ThumbnailCreator = ({ children }: { children: React.ReactNode }) =>
 
       if (processedImageSrc) {
         const fg = new Image()
+
+        // CORS
+        fg.crossOrigin = "anonymous"
         fg.onload = () => {
           ctx.drawImage(fg, 0, 0, canvas.width, canvas.height)
         }
@@ -422,17 +495,20 @@ export const ThumbnailCreator = ({ children }: { children: React.ReactNode }) =>
 
   useEffect(() => {
     if (canvasReady) drawCompositeImage()
-  }, [canvasReady, imageSrc, processedImageSrc, text, presetKey, fontKey])
+  }, [canvasReady, imageSrc, processedImageSrc, text, presetKey, fontKey, drawCompositeImage])
 
   function downloadImg() {
     if (canvasRef.current) {
-      const link = document.createElement("a")
-      link.download = "thumbnail.png"
-      link.href = canvasRef.current?.toDataURL() ?? ""
-      link.click()
+      // Save to database first
+      saveThumbnail();
+
+      // Then download
+      const link = document.createElement("a");
+      link.download = "thumbnail.png";
+      link.href = canvasRef.current?.toDataURL() ?? "";
+      link.click();
     }
   }
-
   return (
     <section className="w-full flex flex-col items-center justify-center space-y-12 ">
       {loading && (
@@ -472,7 +548,7 @@ export const ThumbnailCreator = ({ children }: { children: React.ReactNode }) =>
             </div>
           </div>
 
-           <div className="flex justify-center">
+          <div className="flex justify-center">
             <Button
               onClick={() => downloadImg()}
               size="lg"
@@ -538,7 +614,7 @@ export const ThumbnailCreator = ({ children }: { children: React.ReactNode }) =>
               ))}
             </div>
 
-           
+
 
             {/* Input area */}
             <div className="max-w-md mx-auto">
@@ -572,7 +648,7 @@ export const ThumbnailCreator = ({ children }: { children: React.ReactNode }) =>
             </div>
           </div>
 
-          
+
         </div>
       )}
 
