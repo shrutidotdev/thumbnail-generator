@@ -10,7 +10,7 @@ type Thumbnail = {
   title: string;
   thumbnailUrl: string;
   createdAt: string;
-  settings: any;
+  settings: Record<string, unknown>;
 };
 
 export default function RecentThumbnail() {

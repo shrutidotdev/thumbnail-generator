@@ -416,7 +416,7 @@ export const ThumbnailCreator = ({ children }: { children: React.ReactNode }) =>
       // Show success message or redirect
       alert('Thumbnail saved successfully!');
 
-    } catch (err: any) {
+    } catch (err: unknown) {
       setError(err.message || 'Failed to save thumbnail');
       console.error(err);
     } finally {
