@@ -8,7 +8,13 @@ const nextConfig: NextConfig = {
         hostname: "img.clerk.com",
       },
     ],
+    formats: ['image/webp', 'image/avif'],
   },
+  experimental: {
+    optimizePackageImports: ['lucide-react', '@radix-ui/react-icons'],
+  },
+  // Enable compression
+  compress: true,
 };
 
 export default nextConfig;

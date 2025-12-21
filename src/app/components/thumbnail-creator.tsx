@@ -4,7 +4,6 @@ import React, { useEffect, useRef, useState } from "react"
 import { Dropzone } from "./dropzone"
 import { Button } from "@/components/ui/button"
 import LoadingSpinner from "./loading"
-import { removeBackground } from "@imgly/background-removal"
 import { Download, Sparkles, CheckCircle, Palette } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Input } from "@/components/ui/input"
@@ -358,11 +357,21 @@ export const ThumbnailCreator = ({ children }: { children: React.ReactNode }) =>
         setThumbnailId(uploadData.thumbnailId);
         setImageSrc(uploadData.originalImageUrl);
 
-        // 2. Process image (background removal)
-        setProcessingStep("Removing background...");
-        const blob = await removeBackground(uploadData.originalImageUrl);
-        const processedImageUrl = URL.createObjectURL(blob);
-        setProcessedImageSrc(processedImageUrl);
+        // 2. Process image (background removal) - moved to server
+        setProcessingStep("Processing image...");
+        const processResponse = await fetch('/api/process', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ thumbnailId: uploadData.thumbnailId }),
+        });
+
+        if (!processResponse.ok) {
+          const error = await processResponse.json();
+          throw new Error(error.error || 'Processing failed');
+        }
+
+        const processData = await processResponse.json();
+        setProcessedImageSrc(processData.processedImageUrl);
         setCanvasReady(true);
         setProcessingStep("Complete!");
 
@@ -380,28 +389,23 @@ export const ThumbnailCreator = ({ children }: { children: React.ReactNode }) =>
 
   // Add function to save thumbnail
   const saveThumbnail = async () => {
-    if (!canvasRef.current || !thumbnailId) return;
+    if (!thumbnailId) return;
 
     setSaving(true);
     setError(null);
 
     try {
-      // Get canvas data as base64
-      const dataUrl = canvasRef.current.toDataURL('image/png');
-
-      // Save to database and blob
+      // Save settings to database
       const response = await fetch('/api/save', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           thumbnailId: thumbnailId,
-          dataUrl: dataUrl,
           settings: {
             text: text,
             preset: presetKey,
             font: fontKey,
           },
-          originalFilename: imageSrc?.split('/').pop() || 'thumbnail',
         }),
       });
 

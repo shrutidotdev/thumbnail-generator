@@ -21,6 +21,7 @@ export async function uploadToBlob(
     const blob = await put(pathname, file, {
       access: 'public',
       addRandomSuffix: false, // We're adding timestamp ourselves
+      contentType: file instanceof Buffer ? 'image/png' : undefined,
     });
 
     return {

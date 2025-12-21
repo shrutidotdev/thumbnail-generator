@@ -51,7 +51,7 @@ export async function POST(req: NextRequest) {
     }
 
     // upload orginal image to vercel blob
-    const { url: originalImageUrl, pathname } = await uploadToBlob(
+    const { url: originalImageUrl } = await uploadToBlob(
       file,
       userId,
       file.name
@@ -79,6 +79,10 @@ export async function POST(req: NextRequest) {
       thumbnailId: thumbnail.id,
       originalImageUrl: thumbnail.originalImageUrl,
       message: "Image uploaded successfully",
+    }, {
+      headers: {
+        'Cache-Control': 'no-cache',
+      }
     });
   } catch (error) {
     console.error("Error while Uploading", error);

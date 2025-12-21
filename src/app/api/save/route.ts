@@ -1,4 +1,3 @@
-import { uploadThumbnailToBlob } from "@/lib/blob";
 import prisma from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
@@ -13,17 +12,17 @@ export async function POST(req: NextRequest) {
             )
         }
 
-        // get the data from req 
+        // get the data from req
         const body = await req.json();
-        const { thumbnailId, dataUrl, settings, originalFilename } = body;
-        if (!thumbnailId || !dataUrl) {
+        const { thumbnailId, settings } = body;
+        if (!thumbnailId) {
             return NextResponse.json(
                 { error: "Missing required fields" },
                 { status: 400 }
             )
         }
 
-        // verify thumbnail ownership 
+        // verify thumbnail ownership and check if it's completed
         const thumbnail = await prisma.thumbnail.findUnique({
             where: { id: thumbnailId },
         });
@@ -35,32 +34,18 @@ export async function POST(req: NextRequest) {
             );
         }
 
+        if (thumbnail.status !== "COMPLETED") {
+            return NextResponse.json(
+                { error: 'Thumbnail is not ready to be saved' },
+                { status: 400 }
+            );
+        }
 
-        // upload processed thumbnail to blob 
-        const { url: thumbnailUrl, size } = await uploadThumbnailToBlob(
-            dataUrl,
-            userId,
-            originalFilename || 'thumbnail'
-        )
-
-        // save
+        // save settings
         const updatedThumbnail = await prisma.thumbnail.update({
             where: { id: thumbnailId },
             data: {
-                thumbnailUrl: thumbnailUrl,
-                status: "COMPLETED",
                 settings: settings || {},
-                fileSize: size
-            }
-        })
-
-        // deduct credit
-        await prisma.user.update({
-            where: { id: userId },
-            data: {
-                credits: {
-                    decrement: 1
-                }
             }
         })
 
@@ -68,7 +53,7 @@ export async function POST(req: NextRequest) {
         await prisma.usageLog.create({
             data: {
                 userId: userId,
-                action: 'thumbnail_generate',
+                action: 'thumbnail_save',
                 metadata: {
                     thumbnailId: thumbnailId,
                     settings: settings,

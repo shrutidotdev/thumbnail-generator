@@ -1,8 +1,8 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { auth } from '@clerk/nextjs/server';
 
-export async function GET(req: NextRequest) {
+export async function GET() {
   try {
     const { userId } = await auth();
 
@@ -35,6 +35,10 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({
       success: true,
       thumbnails: thumbnails,
+    }, {
+      headers: {
+        'Cache-Control': 'private, max-age=300', // Cache for 5 minutes
+      }
     });
 
   } catch (error) {
