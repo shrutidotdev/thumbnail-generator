@@ -6,7 +6,7 @@ export async function AuthWelcome() {
   const { userId } = await auth();
   
   if (!userId) {
-    return <h1 className='text-2xl font-bold text-black'>Thumbnail Generator</h1>;
+    return;
   }
 
   const user = await currentUser();

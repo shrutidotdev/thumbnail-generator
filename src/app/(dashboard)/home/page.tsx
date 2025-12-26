@@ -58,7 +58,7 @@ export default function HomeThumbnailGenerator() {
               </div>
             </section>
 
-            {/* Elegant Divider */}
+            {/*  Divider */}
             <div className="px-8 sm:px-12 lg:px-16">
               <Divider />
             </div>
