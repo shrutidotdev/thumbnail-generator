@@ -15,6 +15,18 @@ const nextConfig: NextConfig = {
   },
   // Enable compression
   compress: true,
+  // Disable Turbopack for production builds to avoid Clerk compatibility issues
+  // Turbopack can still be used for dev with: pnpm dev --turbopack
+  webpack: (config, { isServer }) => {
+    // Ensure Clerk works properly with webpack
+    if (!isServer) {
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        fs: false,
+      };
+    }
+    return config;
+  },
 };
 
 export default nextConfig;
