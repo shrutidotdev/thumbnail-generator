@@ -480,15 +480,16 @@ export const ThumbnailCreator = ({ children }: { children: React.ReactNode }) =>
       };
 
       const drawFgOverText = () => {
-        drawText();
-
         if (processedImageSrc) {
           const fg = new Image();
           fg.crossOrigin = "anonymous";
           fg.onload = () => {
             ctx.drawImage(fg, 0, 0, canvas.width, canvas.height);
+            drawText();
           };
           fg.src = processedImageSrc;
+        } else {
+          drawText();
         }
       };
 
