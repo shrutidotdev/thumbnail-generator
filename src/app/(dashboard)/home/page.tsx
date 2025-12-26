@@ -7,7 +7,7 @@ import WelcomePage from "@/app/components/welcomepage"
 
 export default function HomeThumbnailGenerator() {
   return (
-    <div className="min-h-screen w-full bg-gradient-to-br from-orange-400 to-black">
+    <div className="min-h-screen w-full">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
         <div className="max-w-7xl mx-auto space-y-12 sm:space-y-16 lg:space-y-20">
           {/* Header Section */}
@@ -31,9 +31,9 @@ export default function HomeThumbnailGenerator() {
           <WelcomePage />
 
           {/* Main Content Area */}
-          <main className="bg-black/10 backdrop-blur-lg rounded-3xl shadow-2xl overflow-hidden">
+          <main className=" bg-gradient-to-br from-orange-400 to-black backdrop-blur-lg rounded-3xl shadow-2xl overflow-hidden">
             {/* Template Gallery Section */}
-            <section className="p-8 sm:p-12 lg:p-16 bg-gradient-to-br from-accent/30 via-background to-accent/20">
+            <section className="p-8 sm:p-12 lg:p-16 ">
               <div className="text-center mb-12">
                 <div className="inline-flex items-center space-x-2 bg-card/80 backdrop-blur-sm text-foreground px-4 py-2 rounded-full text-sm font-medium mb-4 border border-border/50">
                   <ImageIcon className="w-4 h-4" />
@@ -42,7 +42,7 @@ export default function HomeThumbnailGenerator() {
                 <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-4 text-balance">
                   Professional Templates
                 </h2>
-                <p className="text-muted-foreground text-lg max-w-2xl mx-auto text-pretty">
+                <p className="text-white text-lg max-w-2xl mx-auto text-pretty">
                   Get inspired by our collection of professionally designed thumbnail templates
                 </p>
               </div>

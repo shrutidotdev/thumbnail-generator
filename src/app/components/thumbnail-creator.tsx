@@ -330,8 +330,8 @@ export const ThumbnailCreator = ({ children }: { children: React.ReactNode }) =>
   const [fontKey, setFontKey] = useState<typeof FONT_OPTIONS[number]['key']>('arial')
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
-  // Memoize FONT_OPTIONS to avoid recreating on every render
-  const fontOptions = React.useMemo(() => FONT_OPTIONS, [])
+  // Font options (static constant)
+  const fontOptions = FONT_OPTIONS
 
   const handleSelectedImage = useCallback(async (file?: File) => {
     if (!file || !userId) return;
@@ -447,46 +447,62 @@ export const ThumbnailCreator = ({ children }: { children: React.ReactNode }) =>
       canvas.height = bg.height;
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.drawImage(bg, 0, 0, canvas.width, canvas.height);
-      ctx.save();
 
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
+      const drawText = () => {
+        ctx.save();
 
-      const baseSize = activePreset.fontSize || 100;
-      const fontWeight = activePreset.fontWeight || "bold";
-      const fontFamily = fontOptions.find(f => f.key === fontKey)?.stack || 'Arial, Helvetica, sans-serif';
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
 
-      ctx.font = `${fontWeight} ${baseSize}px ${fontFamily}`;
-      const measured = ctx.measureText(text).width;
-      const targetWidth = canvas.width * 0.9;
-      const scaled = Math.max(24, Math.floor((baseSize * targetWidth) / Math.max(1, measured)));
-      ctx.font = `${fontWeight} ${scaled}px ${fontFamily}`;
+        const baseSize = activePreset.fontSize || 100;
+        const fontWeight = activePreset.fontWeight || "bold";
+        const fontFamily = fontOptions.find(f => f.key === fontKey)?.stack || 'Arial, Helvetica, sans-serif';
 
-      ctx.fillStyle = activePreset.color;
-      ctx.globalAlpha = activePreset.opacity || 1;
+        ctx.font = `${fontWeight} ${baseSize}px ${fontFamily}`;
+        const measured = ctx.measureText(text).width;
+        const targetWidth = canvas.width * 0.9;
+        const scaled = Math.max(24, Math.floor((baseSize * targetWidth) / Math.max(1, measured)));
+        ctx.font = `${fontWeight} ${scaled}px ${fontFamily}`;
 
-      const x = canvas.width / 2;
-      const y = canvas.height / 2;
+        ctx.fillStyle = activePreset.color;
+        ctx.globalAlpha = activePreset.opacity || 1;
 
-      ctx.translate(x, y);
-      ctx.shadowColor = activePreset.shadowColor;
-      ctx.shadowBlur = Math.floor(scaled * (activePreset.shadowBlurFactor || 0.1));
-      ctx.shadowOffsetX = 0;
-      ctx.shadowOffsetY = 0;
-      ctx.fillText(text, 0, 0);
-      ctx.restore();
+        const x = canvas.width / 2;
+        const y = canvas.height / 2;
 
-      if (processedImageSrc) {
-        const fg = new Image();
-        fg.crossOrigin = "anonymous";
-        fg.onload = () => {
-          ctx.drawImage(fg, 0, 0, canvas.width, canvas.height);
-        };
-        fg.src = processedImageSrc;
+        ctx.translate(x, y);
+        ctx.shadowColor = activePreset.shadowColor;
+        ctx.shadowBlur = Math.floor(scaled * (activePreset.shadowBlurFactor || 0.1));
+        ctx.shadowOffsetX = 0;
+        ctx.shadowOffsetY = 0;
+        ctx.fillText(text, 0, 0);
+        ctx.restore();
+      };
+
+      const drawFgOverText = () => {
+        drawText();
+
+        if (processedImageSrc) {
+          const fg = new Image();
+          fg.crossOrigin = "anonymous";
+          fg.onload = () => {
+            ctx.drawImage(fg, 0, 0, canvas.width, canvas.height);
+          };
+          fg.src = processedImageSrc;
+        }
+      };
+
+      type DocumentWithFonts = Document & { fonts?: { ready?: Promise<unknown> } }
+      const doc = (document as unknown) as DocumentWithFonts;
+      if (typeof document !== 'undefined' && doc.fonts?.ready) {
+        doc.fonts.ready.then(drawFgOverText).catch(() => drawFgOverText());
+      } else {
+        drawFgOverText();
       }
     };
+    
     bg.src = imageSrc;
-  }, [imageSrc, processedImageSrc, text, presetKey, fontKey, fontOptions]);
+  }, [imageSrc, processedImageSrc, text, presetKey, fontKey, fontOptions] as const);
 
   useEffect(() => {
     if (imageSrc) setCanvasReady(true);
@@ -607,7 +623,7 @@ export const ThumbnailCreator = ({ children }: { children: React.ReactNode }) =>
               <p className="text-md text-white tracking-wide">Select a preset to customize your thumbnail text</p>
             </div>
 
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 max-w-4xl mx-auto">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 max-w-8xl mx-auto">
               {Object.entries(PRESETS).map(([key, preset]) => {
                 const isSelected = presetKey === key;
                 return (

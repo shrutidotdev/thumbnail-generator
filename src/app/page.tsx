@@ -1,23 +1,25 @@
-import { Button } from "@/components/ui/button"
-import { Sparkles, Zap, ArrowRight, Check, ImageIcon } from "lucide-react"
-import Image from "next/image"
-import Link from "next/link"
-import { Navbar } from "./components/navbar"
+import { Button } from "@/components/ui/button";
+import { Sparkles, Zap, ArrowRight, Check, ImageIcon } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { Navbar } from "./components/navbar";
 
 // Disable static generation for this page since it uses Clerk components
-export const dynamic = 'force-dynamic'
+export const dynamic = "force-dynamic";
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen w-full bg-gradient-to-br from-orange-900 via-black to-black">
+    <div className="min-h-screen w-full bg-gradient-to-br from-orange-500 via-black to-black">
       <Navbar />
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 scroll-smooth">
         <div className="max-w-7xl mx-auto">
-
           {/* Hero Section */}
-          <section id="hero" className="text-center space-y-8 py-12 sm:py-16 lg:py-20 animate-fade-in-up">
+          <section
+            id="hero"
+            className="text-center space-y-8 py-12 sm:py-16 lg:py-20 animate-fade-in-up"
+          >
             <div className="space-y-6">
-              <div className="inline-flex items-center space-x-2 bg-orange-500/20 backdrop-blur-sm text-white px-6 py-3 rounded-full text-sm font-semibold border border-orange-400/30">
+              <div className="inline-flex items-center space-x-2 bg-orange-500/20 backdrop-blur-sm text-white px-6 py-3 rounded-full text-sm font-semibold border border-orange-200/30">
                 <Sparkles className="w-4 h-4" />
                 <span>AI-Powered Thumbnail Generator</span>
               </div>
@@ -29,8 +31,8 @@ export default function HomePage() {
                 </span>
               </h1>
               <p className="text-lg sm:text-xl md:text-2xl text-white/90 max-w-3xl mx-auto text-pretty leading-relaxed font-medium px-4">
-                Transform your images into professional POV-style thumbnails with AI-powered background removal and
-                stunning templates
+                Transform your images into professional POV-style thumbnails
+                with AI-powered background removal and stunning templates
               </p>
             </div>
 
@@ -39,7 +41,7 @@ export default function HomePage() {
               <Link href="/sign-up">
                 <Button
                   size="lg"
-                  className="w-full sm:w-auto min-w-[200px] bg-white text-black hover:bg-white/90 text-lg px-10 py-6 font-bold rounded-xl transition-all duration-300 hover:scale-105 shadow-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+                  className="w-full sm:w-auto min-w-[200px] bg-black text-white text-lg px-10 py-6 font-bold rounded-xl transition-all duration-300 hover:scale-105 shadow-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black"
                   aria-label="Get started with a free account"
                 >
                   Get Started Free
@@ -48,9 +50,8 @@ export default function HomePage() {
               </Link>
               <Link href="/sign-in">
                 <Button
-                  variant="outline"
                   size="lg"
-                  className="w-full sm:w-auto min-w-[200px] border-2 border-white text-white hover:bg-white/10 text-lg px-10 py-6 font-bold rounded-xl bg-transparent transition-all duration-300 hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+                  className="w-full sm:w-auto min-w-[200px] text-white text-lg px-10 py-6 font-bold rounded-xl bg-orange-400 hover:bg-orange-400 transition-all duration-300 hover:scale-105 "
                   aria-label="Sign in to your existing account"
                 >
                   Sign In
@@ -72,7 +73,8 @@ export default function HomePage() {
                     Professional POV Thumbnails
                   </h2>
                   <p className="text-white/80 text-xl max-w-3xl mx-auto text-pretty leading-relaxed">
-                    Everything you need to create stunning POV-style thumbnails that drive engagement
+                    Everything you need to create stunning POV-style thumbnails
+                    that drive engagement
                   </p>
                 </div>
 
@@ -81,9 +83,12 @@ export default function HomePage() {
                     <div className="w-16 h-16 bg-orange-500/20 rounded-2xl flex items-center justify-center mx-auto">
                       <Zap className="w-8 h-8 text-orange-400" />
                     </div>
-                    <h3 className="text-2xl font-bold text-white">AI Background Removal</h3>
+                    <h3 className="text-2xl font-bold text-white">
+                      AI Background Removal
+                    </h3>
                     <p className="text-white/70 text-lg leading-relaxed">
-                      Automatically remove backgrounds with precision using advanced AI technology
+                      Automatically remove backgrounds with precision using
+                      advanced AI technology
                     </p>
                   </div>
 
@@ -91,9 +96,12 @@ export default function HomePage() {
                     <div className="w-16 h-16 bg-orange-500/20 rounded-2xl flex items-center justify-center mx-auto">
                       <ImageIcon className="w-8 h-8 text-orange-400" />
                     </div>
-                    <h3 className="text-2xl font-bold text-white">POV Style Templates</h3>
+                    <h3 className="text-2xl font-bold text-white">
+                      POV Style Templates
+                    </h3>
                     <p className="text-white/70 text-lg leading-relaxed">
-                      Choose from professionally designed POV-style thumbnail templates
+                      Choose from professionally designed POV-style thumbnail
+                      templates
                     </p>
                   </div>
 
@@ -101,9 +109,12 @@ export default function HomePage() {
                     <div className="w-16 h-16 bg-orange-500/20 rounded-2xl flex items-center justify-center mx-auto">
                       <Sparkles className="w-8 h-8 text-orange-400" />
                     </div>
-                    <h3 className="text-2xl font-bold text-white">Instant Results</h3>
+                    <h3 className="text-2xl font-bold text-white">
+                      Instant Results
+                    </h3>
                     <p className="text-white/70 text-lg leading-relaxed">
-                      Generate professional thumbnails in seconds, ready for your content
+                      Generate professional thumbnails in seconds, ready for
+                      your content
                     </p>
                   </div>
                 </div>
@@ -111,7 +122,6 @@ export default function HomePage() {
                 {/* Images  */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
                   <div className="text-center space-y-6 p-8 rounded-2xl border border-orange-400/20 bg-black/20 backdrop-blur-sm transform hover:scale-105 transition-all duration-500 hover:border-orange-400/40">
-
                     <Image
                       alt="Professional POV thumbnail example with vibrant design"
                       width={500}
@@ -175,7 +185,9 @@ export default function HomePage() {
                   <div className="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center flex-shrink-0">
                     <Check className="w-5 h-5 text-white font-bold" />
                   </div>
-                  <span className="text-white text-lg font-medium">{benefit}</span>
+                  <span className="text-white text-lg font-medium">
+                    {benefit}
+                  </span>
                 </div>
               ))}
             </div>
@@ -195,8 +207,8 @@ export default function HomePage() {
                   Thumbnails Today
                 </h2>
                 <p className="text-white/90 text-lg sm:text-xl max-w-2xl mx-auto leading-relaxed text-pretty px-4">
-                  Join thousands of creators who use our AI-powered tool to make professional POV-style thumbnails that
-                  get clicks
+                  Join thousands of creators who use our AI-powered tool to make
+                  professional POV-style thumbnails that get clicks
                 </p>
                 <div className="pt-6">
                   <Link href="/sign-up">
@@ -217,11 +229,13 @@ export default function HomePage() {
           {/* Footer */}
           <footer className="py-8 sm:py-12 text-center border-t border-white/10 mt-12">
             <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-3 text-white/60">
-              <span className="text-sm">© 2025 POV ThumbnailGen. All rights reserved.</span>
+              <span className="text-sm">
+                © 2025 POV ThumbnailGen. All rights reserved.
+              </span>
             </div>
           </footer>
         </div>
       </div>
     </div>
-  )
+  );
 }

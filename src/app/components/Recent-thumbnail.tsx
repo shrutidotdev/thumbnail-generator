@@ -90,10 +90,10 @@ const RecentThumbnail = () => {
 
   return (
     <section 
-      className="w-full p-8 sm:p-12 lg:p-16 bg-gradient-to-br from-black via-orange-500/90 to-accent/20 rounded-3xl shadow-2xl border border-border/50 overflow-hidden"
+      className="max-w-8xl p-8 sm:p-12 lg:p-16 bg-gradient-to-br from-black via-orange-500/90 to-accent/20 rounded-3xl   overflow-hidden"
       aria-label="Recent thumbnails section"
     >
-      <div className="flex flex-col items-center justify-center space-y-4 p-4">
+      <div className="flex flex-col items-center justify-center space-y-4 p-4 w-full">
         <h1 className="scroll-m-20 text-center text-4xl font-extrabold tracking-tight text-balance mb-10 text-white">
           Recent thumbnail edits...
         </h1>
