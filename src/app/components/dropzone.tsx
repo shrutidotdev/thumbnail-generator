@@ -29,10 +29,24 @@ export function Dropzone({ className, setFile }: DropzoneProps) {
       e.preventDefault()
       setIsDragOver(false)
 
-      const files = Array.from(e.dataTransfer.files)
+      const files = Array.from(e.dataTransfer.files).filter(file => file.type.startsWith('image/'))
+      if (files.length === 0) {
+        return
+      }
       setFile?.(files)
     },
     [setFile],
+  )
+
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault()
+        const fileInput = document.getElementById('fileInput') as HTMLInputElement
+        fileInput?.click()
+      }
+    },
+    []
   )
 
   return (
@@ -46,6 +60,8 @@ export function Dropzone({ className, setFile }: DropzoneProps) {
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
+      role="region"
+      aria-label="File upload dropzone"
     >
       {/* Main dropzone container */}
       <div className={cn(
@@ -89,6 +105,8 @@ export function Dropzone({ className, setFile }: DropzoneProps) {
 
             <Label
               htmlFor="fileInput"
+              tabIndex={0}
+              onKeyDown={handleKeyDown}
               className={cn(
                 "group flex flex-col items-center justify-center",
                 "w-full h-32 sm:h-40 lg:h-48",
@@ -96,9 +114,10 @@ export function Dropzone({ className, setFile }: DropzoneProps) {
                 "bg-black/10 hover:bg-black/20",
                 "rounded-xl sm:rounded-2xl cursor-pointer",
                 "transition-all duration-200",
-                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50",
+                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50 focus-visible:ring-offset-2",
                 isDragOver && "border-white bg-black/20 scale-[1.02]"
               )}
+              aria-label="Click or drag files here to upload"
             >
               <div className="flex flex-col items-center justify-center space-y-2 sm:space-y-3 text-center px-4">
                 <FileImage className="w-6 h-6 sm:w-8 sm:h-8 text-white/80 group-hover:text-white transition-colors" />

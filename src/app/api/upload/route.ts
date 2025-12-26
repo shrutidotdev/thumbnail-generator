@@ -6,7 +6,6 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
   try {
-    // check for user
     const { userId } = await auth();
     if (!userId) {
       return NextResponse.json(
@@ -15,7 +14,6 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // check for credits
     const user = await prisma.user.findUnique({
       where: { id: userId },
       select: { credits: true, email: true },
@@ -25,23 +23,20 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    // for credits
     if (user.credits < 1) {
       return NextResponse.json(
-        { error: "Insufficient credits. Please upgrade you plan." },
+        { error: "Insufficient credits. Please upgrade your plan." },
         { status: 403 }
       );
     }
 
-    // get uploaded file
     const formData = await req.formData();
     const file = formData.get("file") as File;
 
     if (!file) {
-      return NextResponse.json({ error: "No file Provided" }, { status: 404 });
+      return NextResponse.json({ error: "No file provided" }, { status: 400 });
     }
 
-    // file size max 10MB
     const maxSize = 10 * 1024 * 1024;
     if (file.size > maxSize) {
       return NextResponse.json(

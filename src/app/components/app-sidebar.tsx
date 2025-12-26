@@ -1,4 +1,5 @@
 import { Calendar, Home, Inbox, Search, Settings } from "lucide-react"
+import Link from "next/link"
 
 import {
   Sidebar,
@@ -11,11 +12,16 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
 
-// Menu items.
-const items = [
+type MenuItem = {
+  title: string;
+  url: string;
+  icon: React.ComponentType<{ className?: string; "aria-hidden"?: boolean }>;
+}
+
+const items: MenuItem[] = [
   {
     title: "Home",
-    url: "#",
+    url: "/home",
     icon: Home,
   },
   {
@@ -40,24 +46,33 @@ const items = [
   },
 ]
 
-export function AppSidebar() {
+export const AppSidebar = () => {
   return (
     <Sidebar>
       <SidebarContent className="bg-gradient-to-br from-orange-400 via-black to-black text-white font-bold">
         <SidebarGroup>
-          <SidebarGroupLabel className="text-white font-bold py-20 text-3xl">Application</SidebarGroupLabel>
+          <SidebarGroupLabel className="text-white font-bold py-20 text-3xl">
+            Application
+          </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {items.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <a href={item.url}>
-                      <item.icon />
-                      <span>{item.title}</span>
-                    </a>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+              {items.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton asChild>
+                      <Link 
+                        href={item.url}
+                        aria-label={`Navigate to ${item.title}`}
+                        className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+                      >
+                        <Icon className="w-5 h-5" aria-hidden="true" />
+                        <span>{item.title}</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                );
+              })}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>

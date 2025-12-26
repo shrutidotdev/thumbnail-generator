@@ -9,28 +9,33 @@ export async function POST(req: NextRequest) {
             return NextResponse.json(
                 { error: "Unauthorized user" },
                 { status: 401 }
-            )
+            );
         }
 
-        // get the data from req
         const body = await req.json();
         const { thumbnailId, settings } = body;
         if (!thumbnailId) {
             return NextResponse.json(
                 { error: "Missing required fields" },
                 { status: 400 }
-            )
+            );
         }
 
-        // verify thumbnail ownership and check if it's completed
         const thumbnail = await prisma.thumbnail.findUnique({
             where: { id: thumbnailId },
         });
 
-        if (!thumbnail || thumbnail.userId !== userId) {
+        if (!thumbnail) {
             return NextResponse.json(
-                { error: 'Thumbnail not found or unauthorized' },
+                { error: 'Thumbnail not found' },
                 { status: 404 }
+            );
+        }
+
+        if (thumbnail.userId !== userId) {
+            return NextResponse.json(
+                { error: 'Unauthorized access' },
+                { status: 403 }
             );
         }
 
@@ -41,15 +46,13 @@ export async function POST(req: NextRequest) {
             );
         }
 
-        // save settings
         const updatedThumbnail = await prisma.thumbnail.update({
             where: { id: thumbnailId },
             data: {
                 settings: settings || {},
             }
-        })
+        });
 
-        // log usage 
         await prisma.usageLog.create({
             data: {
                 userId: userId,
@@ -59,7 +62,7 @@ export async function POST(req: NextRequest) {
                     settings: settings,
                 }
             }
-        })
+        });
 
         return NextResponse.json({
             success: true,

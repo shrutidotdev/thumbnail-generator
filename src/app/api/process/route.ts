@@ -6,7 +6,6 @@ import prisma from "@/lib/prisma";
 
 export async function POST(req: NextRequest) {
   try {
-    // Check for user
     const { userId } = await auth();
     if (!userId) {
       return NextResponse.json(
@@ -22,14 +21,17 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Thumbnail ID is required" }, { status: 400 });
     }
 
-    // Get thumbnail from database
     const thumbnail = await prisma.thumbnail.findUnique({
       where: { id: thumbnailId },
       select: { id: true, originalImageUrl: true, userId: true, status: true }
     });
 
-    if (!thumbnail || thumbnail.userId !== userId) {
+    if (!thumbnail) {
       return NextResponse.json({ error: "Thumbnail not found" }, { status: 404 });
+    }
+
+    if (thumbnail.userId !== userId) {
+      return NextResponse.json({ error: "Unauthorized access" }, { status: 403 });
     }
 
     if (thumbnail.status !== "PROCESSING") {

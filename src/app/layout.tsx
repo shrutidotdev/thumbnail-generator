@@ -7,6 +7,7 @@ import './globals.css'
 
 import { AuthWelcome } from './utils/auth-welcome'
 import { ClerkUI } from './components/ClerkUI'
+import { Toaster } from '@/components/ui/sonner'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -35,6 +36,7 @@ export default function RootLayout({
         <body>
           <AuthWelcome />
           <ClerkUI />
+          <Toaster />
           {children}
         </body>
       </html>
