@@ -7,9 +7,9 @@ import WelcomePage from "@/app/components/welcomepage"
 
 export default function HomeThumbnailGenerator() {
   return (
-    <div className="min-h-screen w-full bg-gradient-to-br from-orange-400 to-black rounded-3xl ">
-      <div className="container  mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-20">
-        <div className="max-w-7xl mx-auto space-y-16 sm:space-y-20 lg:space-y-24">
+    <div className="min-h-screen w-full bg-gradient-to-br from-orange-400 to-black">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
+        <div className="max-w-7xl mx-auto space-y-12 sm:space-y-16 lg:space-y-20">
           {/* Header Section */}
           {/* <header className="text-center space-y-6 animate-fade-in-up">
             <div className="space-y-4">

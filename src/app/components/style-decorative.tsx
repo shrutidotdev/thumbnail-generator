@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 
 export const StyleDecorative = ({
     image
@@ -11,16 +11,28 @@ export const StyleDecorative = ({
     const [isSelected, setIsSelected] = useState(false);
     const [mouseOver, setMouseOver] = useState(false);
 
-    const handleClick = () => {
+    const handleClick = useCallback(() => {
         setIsSelected(!isSelected);
-    };
+    }, [isSelected]);
+
+    const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            handleClick();
+        }
+    }, [handleClick]);
 
     return (
         <div
             onMouseEnter={() => setMouseOver(true)}
             onMouseLeave={() => setMouseOver(false)}
             onClick={handleClick}
-            className="relative w-fit cursor-pointer transition-all hover:scale-105"
+            onKeyDown={handleKeyDown}
+            role="button"
+            tabIndex={0}
+            aria-label="Select thumbnail template"
+            aria-pressed={isSelected}
+            className="relative w-fit cursor-pointer transition-all hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-xl"
         >
             {(mouseOver || isSelected) && (
                 <>
@@ -34,9 +46,10 @@ export const StyleDecorative = ({
             )}
             <Image
                 src={image || "/placeholder.svg"}
-                alt="Thumbnail Preview Template 2"
-                className="min-w-52 rounded-xl"
-                priority
+                alt={`Thumbnail template preview ${image.split('/').pop()?.split('.')[0] || ''}`}
+                className="min-w-52 rounded-xl object-cover"
+                priority={false}
+                loading="lazy"
                 width={600}
                 height={600}
                 sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 40vw"

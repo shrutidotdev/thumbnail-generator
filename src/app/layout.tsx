@@ -6,7 +6,6 @@ import { Geist, Geist_Mono } from 'next/font/google'
 import './globals.css'
 
 import { AuthWelcome } from './utils/auth-welcome'
-import { ClerkUI } from './components/ClerkUI'
 import { Toaster } from '@/components/ui/sonner'
 
 const geistSans = Geist({
@@ -35,7 +34,6 @@ export default function RootLayout({
       <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
         <body>
           <AuthWelcome />
-          <ClerkUI />
           <Toaster />
           {children}
         </body>
