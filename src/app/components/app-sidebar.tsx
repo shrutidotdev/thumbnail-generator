@@ -46,7 +46,7 @@ export const AppSidebar = () => {
                         aria-label={`Navigate to ${item.title}`}
                         className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
                       >
-                        <Icon className="w-5 h-5" aria-hidden="true" />
+                        <Icon className="w-5 h-5" aria-hidden />
                         <span>{item.title}</span>
                       </Link>
                     </SidebarMenuButton>

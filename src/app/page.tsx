@@ -1,8 +1,11 @@
 import { Button } from "@/components/ui/button"
-import { Sparkles, Zap, ArrowRight, Check,ImageIcon } from "lucide-react"
+import { Sparkles, Zap, ArrowRight, Check, ImageIcon } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
 import { Navbar } from "./components/navbar"
+
+// Disable static generation for this page since it uses Clerk components
+export const dynamic = 'force-dynamic'
 
 export default function HomePage() {
   return (

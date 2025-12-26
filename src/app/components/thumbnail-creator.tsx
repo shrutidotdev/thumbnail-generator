@@ -330,6 +330,9 @@ export const ThumbnailCreator = ({ children }: { children: React.ReactNode }) =>
   const [fontKey, setFontKey] = useState<typeof FONT_OPTIONS[number]['key']>('arial')
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
+  // Memoize FONT_OPTIONS to avoid recreating on every render
+  const fontOptions = React.useMemo(() => FONT_OPTIONS, [])
+
   const handleSelectedImage = useCallback(async (file?: File) => {
     if (!file || !userId) return;
 
@@ -451,7 +454,7 @@ export const ThumbnailCreator = ({ children }: { children: React.ReactNode }) =>
 
       const baseSize = activePreset.fontSize || 100;
       const fontWeight = activePreset.fontWeight || "bold";
-      const fontFamily = FONT_OPTIONS.find(f => f.key === fontKey)?.stack || 'Arial, Helvetica, sans-serif';
+      const fontFamily = fontOptions.find(f => f.key === fontKey)?.stack || 'Arial, Helvetica, sans-serif';
 
       ctx.font = `${fontWeight} ${baseSize}px ${fontFamily}`;
       const measured = ctx.measureText(text).width;
@@ -483,7 +486,7 @@ export const ThumbnailCreator = ({ children }: { children: React.ReactNode }) =>
       }
     };
     bg.src = imageSrc;
-  }, [imageSrc, processedImageSrc, text, presetKey, fontKey]);
+  }, [imageSrc, processedImageSrc, text, presetKey, fontKey, fontOptions]);
 
   useEffect(() => {
     if (imageSrc) setCanvasReady(true);
@@ -518,8 +521,8 @@ export const ThumbnailCreator = ({ children }: { children: React.ReactNode }) =>
   }, []);
 
   const handleFontChange = useCallback((value: string) => {
-    setFontKey(value as typeof fontKey);
-  }, [fontKey]);
+    setFontKey(value as typeof FONT_OPTIONS[number]['key']);
+  }, []);
 
   const handleKeyDown = useCallback((e: React.KeyboardEvent, action: () => void) => {
     if (e.key === 'Enter' || e.key === ' ') {
@@ -683,7 +686,7 @@ export const ThumbnailCreator = ({ children }: { children: React.ReactNode }) =>
                     <SelectValue placeholder="Choose font" />
                   </SelectTrigger>
                   <SelectContent>
-                    {FONT_OPTIONS.map((f) => (
+                    {fontOptions.map((f) => (
                       <SelectItem key={f.key} value={f.key}>{f.label}</SelectItem>
                     ))}
                   </SelectContent>
