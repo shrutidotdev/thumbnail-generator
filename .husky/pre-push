@@ -1,2 +1,22 @@
 #!/usr/bin/env sh
-pnpm build
+# Only run build on main/master branch or when SKIP_BUILD is not set
+# Skip build during development by using: git push --no-verify
+# Or set SKIP_BUILD=1 before pushing
+
+if [ "$SKIP_BUILD" = "1" ]; then
+  echo "⏭️  Skipping build (SKIP_BUILD=1)"
+  exit 0
+fi
+
+# Get current branch name
+branch=$(git rev-parse --abbrev-ref HEAD)
+
+# Only run build on main/master branches
+if [ "$branch" = "main" ] || [ "$branch" = "master" ]; then
+  echo "🏗️  Building project before push to $branch branch..."
+  pnpm build
+else
+  echo "⏭️  Skipping build on branch: $branch (only runs on main/master)"
+  echo "💡 To skip build: git push --no-verify or SKIP_BUILD=1 git push"
+  exit 0
+fi

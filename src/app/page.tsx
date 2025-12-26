@@ -9,7 +9,7 @@ export const dynamic = 'force-dynamic'
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen w-full bg-gradient-to-br from-orange-400 via-black to-black">
+    <div className="min-h-screen w-full bg-gradient-to-br from-orange-900 via-black to-black">
       <Navbar />
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 scroll-smooth">
         <div className="max-w-7xl mx-auto">

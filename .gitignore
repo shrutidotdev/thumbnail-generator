@@ -24,6 +24,7 @@
 .DS_Store
 *.pem
 ENV_SETUP.md
+GIT_WORKFLOW.md
 
 
 # debug
