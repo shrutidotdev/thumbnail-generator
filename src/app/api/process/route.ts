@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
-import sharp from "sharp";
 import { uploadToBlob } from "@/lib/blob";
 import prisma from "@/lib/prisma";
+import sharp from "sharp";
 
 export async function POST(req: NextRequest) {
   try {
@@ -45,20 +45,32 @@ export async function POST(req: NextRequest) {
     }
 
     const imageBuffer = await imageResponse.arrayBuffer();
-    const buffer = Buffer.from(imageBuffer);
-
-    // Process image with Sharp - basic optimization
-    // For better background removal, consider using a more advanced library
-    const processedBuffer = await sharp(buffer)
-      .png({
-        quality: 90,
-        compressionLevel: 6
-      })
-      .resize(1920, 1080, {
-        fit: 'inside',
-        withoutEnlargement: true
-      })
-      .toBuffer();
+    let processedBuffer: Buffer;
+    
+    try {
+      // Dynamically import the background removal library to avoid bundling issues
+      console.log("Starting background removal...");
+      const bgRemovalModule = await import("@imgly/background-removal-node");
+      const removeBackground = bgRemovalModule.removeBackground;
+      
+      const removedBgBlob = await removeBackground(new Blob([imageBuffer]), {
+        output: {
+          format: "image/png",
+          quality: 0.9,
+        },
+      });
+      console.log("Background removal complete");
+      
+      // Convert Blob to Buffer for upload
+      const processedArrayBuffer = await removedBgBlob.arrayBuffer();
+      processedBuffer = Buffer.from(processedArrayBuffer);
+    } catch (bgRemovalError) {
+      console.error("Background removal failed, falling back to basic processing:", bgRemovalError);
+      // Fallback: just process with sharp if background removal fails
+      processedBuffer = await sharp(Buffer.from(imageBuffer))
+        .png({ quality: 90 })
+        .toBuffer();
+    }
 
     // Upload processed image to blob
     const { url: processedImageUrl } = await uploadToBlob(

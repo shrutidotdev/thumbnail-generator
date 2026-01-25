@@ -12,7 +12,6 @@ import { useAuth } from '@clerk/nextjs';
 import { Inter, Bebas_Neue, Oswald, Righteous, Francois_One } from "next/font/google"
 import { toast } from "sonner"
 
-// Configure the fonts
 const inter = Inter({
   subsets: ['latin'],
   display: 'swap',
@@ -330,8 +329,8 @@ export const ThumbnailCreator = ({ children }: { children: React.ReactNode }) =>
   const [fontKey, setFontKey] = useState<typeof FONT_OPTIONS[number]['key']>('arial')
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
-  // Font options (static constant)
-  const fontOptions = FONT_OPTIONS
+  // Memoize FONT_OPTIONS to avoid recreating on every render
+  const fontOptions = React.useMemo(() => FONT_OPTIONS, [])
 
   const handleSelectedImage = useCallback(async (file?: File) => {
     if (!file || !userId) return;
@@ -339,10 +338,10 @@ export const ThumbnailCreator = ({ children }: { children: React.ReactNode }) =>
     setLoading(true);
     setError(null);
     setProcessedImageSrc(null);
-    setProcessingStep("Uploading image...");
+    setProcessingStep("Uploading original image...");
 
     try {
-      // 1. Upload to blob via API
+      // 1. Upload original image to blob via API
       const formData = new FormData();
       formData.append('file', file);
 
@@ -360,21 +359,41 @@ export const ThumbnailCreator = ({ children }: { children: React.ReactNode }) =>
       setThumbnailId(uploadData.thumbnailId);
       setImageSrc(uploadData.originalImageUrl);
 
-      // 2. Process image (background removal) - moved to server
-      setProcessingStep("Processing image...");
-      const processResponse = await fetch('/api/process', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ thumbnailId: uploadData.thumbnailId }),
+      // 2. Client-side Background Removal
+      setProcessingStep("Removing background (this may take a moment)...");
+      
+      // Dynamic import to ensure it loads only on client
+      const { removeBackground } = await import("@imgly/background-removal");
+      
+      const imageBlob = await removeBackground(file, {
+        progress: (key: string, current: number, total: number) => {
+          const percent = Math.round((current / total) * 100);
+          setProcessingStep(`Removing background: ${percent}%`);
+        }
       });
 
-      if (!processResponse.ok) {
-        const error = await processResponse.json();
-        throw new Error(error.error || 'Processing failed');
+      // 3. Upload processed image
+      setProcessingStep("Saving processed image...");
+      const processedFormData = new FormData();
+      processedFormData.append('file', imageBlob, 'processed.png');
+      processedFormData.append('thumbnailId', uploadData.thumbnailId);
+
+      const processUploadResponse = await fetch('/api/upload-processed', {
+        method: 'POST',
+        body: processedFormData,
+      });
+
+      if (!processUploadResponse.ok) {
+         // If upload fails, we still have the local blob to show, but warn user
+         console.error("Failed to upload processed image backup");
+      } else {
+        const processData = await processUploadResponse.json();
+        // Use the uploaded URL if available, otherwise we can use the local blob URL
+        // But for consistency let's use the local blob URL for immediate display
       }
 
-      const processData = await processResponse.json();
-      setProcessedImageSrc(processData.processedImageUrl);
+      const processedUrl = URL.createObjectURL(imageBlob);
+      setProcessedImageSrc(processedUrl);
       setCanvasReady(true);
       setProcessingStep("Complete!");
 
@@ -383,10 +402,14 @@ export const ThumbnailCreator = ({ children }: { children: React.ReactNode }) =>
       setError(errorMessage);
       toast.error(errorMessage);
       console.error("Image processing error:", err);
+      // Fallback: If background removal fails, just use original image
+      if (imageSrc) {
+         setCanvasReady(true);
+      }
     } finally {
       setLoading(false);
     }
-  }, [userId]);
+  }, [userId, imageSrc]);
 
   const handleSaveThumbnail = useCallback(async () => {
     if (!thumbnailId) return;
@@ -446,11 +469,13 @@ export const ThumbnailCreator = ({ children }: { children: React.ReactNode }) =>
       canvas.width = bg.width;
       canvas.height = bg.height;
       ctx.clearRect(0, 0, canvas.width, canvas.height);
+      
+      // Step 1: Draw the original background image
       ctx.drawImage(bg, 0, 0, canvas.width, canvas.height);
 
+      // Helper function to draw text
       const drawText = () => {
         ctx.save();
-
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
 
@@ -477,33 +502,41 @@ export const ThumbnailCreator = ({ children }: { children: React.ReactNode }) =>
         ctx.shadowOffsetY = 0;
         ctx.fillText(text, 0, 0);
         ctx.restore();
+        
+        // Reset globalAlpha after text drawing
+        ctx.globalAlpha = 1;
       };
 
-      const drawFgOverText = () => {
-        if (processedImageSrc) {
-          const fg = new Image();
-          fg.crossOrigin = "anonymous";
-          fg.onload = () => {
-            ctx.drawImage(fg, 0, 0, canvas.width, canvas.height);
-            drawText();
-          };
-          fg.src = processedImageSrc;
-        } else {
+      // Helper function to draw the foreground (person cutout)
+      const drawForeground = (fg: HTMLImageElement) => {
+        ctx.save();
+        ctx.globalAlpha = 1;
+        ctx.drawImage(fg, 0, 0, canvas.width, canvas.height);
+        ctx.restore();
+      };
+
+      // If we have a processed foreground image, layer properly: bg -> text -> fg
+      if (processedImageSrc) {
+        const fg = new Image();
+        fg.crossOrigin = "anonymous";
+        fg.onload = () => {
+          // Step 2: Draw text on top of background (will appear behind person)
           drawText();
-        }
-      };
-
-      type DocumentWithFonts = Document & { fonts?: { ready?: Promise<unknown> } }
-      const doc = (document as unknown) as DocumentWithFonts;
-      if (typeof document !== 'undefined' && doc.fonts?.ready) {
-        doc.fonts.ready.then(drawFgOverText).catch(() => drawFgOverText());
+          // Step 3: Draw the foreground (person with removed background) on top
+          drawForeground(fg);
+        };
+        fg.onerror = () => {
+          console.error("Failed to load foreground image");
+          drawText();
+        };
+        fg.src = processedImageSrc;
       } else {
-        drawFgOverText();
+        // No processed image, just draw the text on the background
+        drawText();
       }
     };
-    
     bg.src = imageSrc;
-  }, [imageSrc, processedImageSrc, text, presetKey, fontKey, fontOptions] as const);
+  }, [imageSrc, processedImageSrc, text, presetKey, fontKey, fontOptions]);
 
   useEffect(() => {
     if (imageSrc) setCanvasReady(true);
@@ -624,7 +657,7 @@ export const ThumbnailCreator = ({ children }: { children: React.ReactNode }) =>
               <p className="text-md text-white tracking-wide">Select a preset to customize your thumbnail text</p>
             </div>
 
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 max-w-8xl mx-auto">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 max-w-4xl mx-auto">
               {Object.entries(PRESETS).map(([key, preset]) => {
                 const isSelected = presetKey === key;
                 return (

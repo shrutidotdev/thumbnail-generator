@@ -52,7 +52,7 @@ export function Dropzone({ className, setFile }: DropzoneProps) {
   return (
     <div
       className={cn(
-        "relative w-full max-w-7xl mx-auto transition-all duration-300 ease-out",
+        "relative w-full max-w-lg mx-auto transition-all duration-300 ease-out",
         "transform hover:scale-[1.02] active:scale-[0.98]",
         isDragOver && "scale-[1.02]",
         className,
