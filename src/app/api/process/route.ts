@@ -17,6 +17,9 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const { thumbnailId } = body;
 
+      console.log("PROCESS API HIT", thumbnailId)
+
+
     if (!thumbnailId) {
       return NextResponse.json({ error: "Thumbnail ID is required" }, { status: 400 });
     }

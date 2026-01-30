@@ -5,7 +5,7 @@ const WelcomePage = async () => {
   const user = await currentUser();
 
   return (
-    <div className="flex flex-col md:flex-row items-center justify-center gap-10 p-6">
+    <div className="flex flex-col md:flex-row items-center justify-center gap-10">
       {/* Profile Picture */}
       {user?.imageUrl && (
         <Image
@@ -29,7 +29,7 @@ const WelcomePage = async () => {
         {/* Subtext */}
         <p className="mt-4 text-lg text-white/90">
           We’re so glad to see you again.  
-          Your journey continues here 🚀
+          Your journey continues here.
         </p>
 
        

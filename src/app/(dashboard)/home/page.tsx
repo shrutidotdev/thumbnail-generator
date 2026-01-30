@@ -31,18 +31,18 @@ export default function HomeThumbnailGenerator() {
           <WelcomePage />
 
           {/* Main Content Area */}
-          <main className="bg-black/10 backdrop-blur-lg rounded-3xl shadow-2xl overflow-hidden">
+          <main className="">
             {/* Template Gallery Section */}
-            <section className="p-8 sm:p-12 lg:p-16 bg-gradient-to-br from-accent/30 via-background to-accent/20">
+            <section className="p-8 sm:p-12 lg:p-16 ">
               <div className="text-center mb-12">
                 <div className="inline-flex items-center space-x-2 bg-card/80 backdrop-blur-sm text-foreground px-4 py-2 rounded-full text-sm font-medium mb-4 border border-border/50">
                   <ImageIcon className="w-4 h-4" />
                   <span>Template Gallery</span>
                 </div>
-                <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-4 text-balance">
+                <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4 text-balance">
                   Professional Templates
                 </h2>
-                <p className="text-muted-foreground text-lg max-w-2xl mx-auto text-pretty">
+                <p className="text-muted-white text-lg max-w-2xl mx-auto text-pretty">
                   Get inspired by our collection of professionally designed thumbnail templates
                 </p>
               </div>

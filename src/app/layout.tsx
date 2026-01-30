@@ -30,8 +30,8 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-   <ClerkProvider >
-      <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
+   <ClerkProvider>
+      <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`} suppressHydrationWarning>
         <body>
           <AuthWelcome />
           <Toaster />

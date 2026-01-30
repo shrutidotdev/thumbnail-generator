@@ -10,13 +10,23 @@ export async function POST(req: NextRequest) {
     if (!userId) {
       return NextResponse.json(
         { error: "Unauthorized user. Please sign in" },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
-    const user = await prisma.user.findUnique({
+    const user = await prisma.user.upsert({
       where: { id: userId },
-      select: { credits: true, email: true },
+      update: {},
+      create: {
+        id: userId,
+        email: "placeholder-" + userId + "@clerk.local",
+        credits: 5,
+        planType: "FREE",
+      },
+      select: {
+        credits: true,
+        email: true,
+      },
     });
 
     if (!user) {
@@ -26,7 +36,7 @@ export async function POST(req: NextRequest) {
     if (user.credits < 1) {
       return NextResponse.json(
         { error: "Insufficient credits. Please upgrade your plan." },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -41,7 +51,7 @@ export async function POST(req: NextRequest) {
     if (file.size > maxSize) {
       return NextResponse.json(
         { error: "File is too large. Max size is 10MB" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -49,7 +59,7 @@ export async function POST(req: NextRequest) {
     const { url: originalImageUrl } = await uploadToBlob(
       file,
       userId,
-      file.name
+      file.name,
     );
 
     // Insert thumbnail record in the database
@@ -69,21 +79,26 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    return NextResponse.json({
-      success: true,
-      thumbnailId: thumbnail.id,
-      originalImageUrl: thumbnail.originalImageUrl,
-      message: "Image uploaded successfully",
-    }, {
-      headers: {
-        'Cache-Control': 'no-cache',
-      }
-    });
+    // console.log("Clerk userId:", userId);
+
+    return NextResponse.json(
+      {
+        success: true,
+        thumbnailId: thumbnail.id,
+        originalImageUrl: thumbnail.originalImageUrl,
+        message: "Image uploaded successfully",
+      },
+      {
+        headers: {
+          "Cache-Control": "no-cache",
+        },
+      },
+    );
   } catch (error) {
     console.error("Error while Uploading", error);
     return NextResponse.json(
       { error: "Upload failed. Please try again" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -102,14 +102,14 @@ const RecentThumbnail = () => {
           {thumbnails.map((thumbnail) => (
             <article 
               key={thumbnail.id} 
-              className="flex flex-col gap-2 justify-between bg-white/10 backdrop-blur-sm p-4 rounded-lg"
+              className="flex flex-col gap-2 justify-between bg-black backdrop-blur-sm p-4 rounded-lg"
             >
-              <div className="relative w-full h-48">
+              <div className="relative w-full aspect-video bg-black/50 rounded-md">
                 <Image
                   src={thumbnail.thumbnailUrl}
                   alt={`Thumbnail: ${thumbnail.title}`}
                   fill
-                  className="rounded-md object-cover"
+                  className="rounded-md object-contain"
                 />
               </div>
               
@@ -129,6 +129,7 @@ const RecentThumbnail = () => {
                 onKeyDown={(e) => handleKeyDown(e, () => handleDownload(thumbnail.thumbnailUrl, thumbnail.title))}
                 aria-label={`Download ${thumbnail.title}`}
                 tabIndex={0}
+                variant={"secondary"}
                 className="w-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
               >
                 <Download className="w-4 h-4 mr-2" aria-hidden="true" />

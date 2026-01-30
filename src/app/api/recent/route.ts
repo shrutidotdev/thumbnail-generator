@@ -13,11 +13,10 @@ export async function GET() {
       );
     }
 
-    // Get user's recent completed thumbnails
     const thumbnails = await prisma.thumbnail.findMany({
       where: {
         userId: userId,
-        status: 'COMPLETED',
+        status: { in: ['PROCESSING','COMPLETED']},
       },
       orderBy: {
         createdAt: 'desc',
@@ -37,7 +36,7 @@ export async function GET() {
       thumbnails: thumbnails,
     }, {
       headers: {
-        'Cache-Control': 'private, max-age=300', // Cache for 5 minutes
+        'Cache-Control': 'no-store', 
       }
     });
 

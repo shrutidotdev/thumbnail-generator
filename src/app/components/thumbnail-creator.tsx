@@ -1,54 +1,66 @@
-"use client"
+"use client";
 
-import React, { useCallback, useEffect, useRef, useState } from "react"
-import { Dropzone } from "./dropzone"
-import { Button } from "@/components/ui/button"
-import LoadingSpinner from "./loading"
-import { Download, Sparkles, CheckCircle, Palette } from "lucide-react"
-import { cn } from "@/lib/utils"
-import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { useAuth } from '@clerk/nextjs';
-import { Inter, Bebas_Neue, Oswald, Righteous, Francois_One } from "next/font/google"
-import { toast } from "sonner"
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { Dropzone } from "./dropzone";
+import { Button } from "@/components/ui/button";
+import LoadingSpinner from "./loading";
+import { Download, Sparkles, CheckCircle, Palette } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { useAuth } from "@clerk/nextjs";
+import {
+  Inter,
+  Bebas_Neue,
+  Oswald,
+  Righteous,
+  Francois_One,
+} from "next/font/google";
+import { toast } from "sonner";
 
 const inter = Inter({
-  subsets: ['latin'],
-  display: 'swap',
-})
+  subsets: ["latin"],
+  display: "swap",
+});
 
 const bebasNeue = Bebas_Neue({
-  subsets: ['latin'],
-  weight: '400',
-  display: 'swap',
-})
+  subsets: ["latin"],
+  weight: "400",
+  display: "swap",
+});
 
 const oswald = Oswald({
-  subsets: ['latin'],
-  display: 'swap',
-})
+  subsets: ["latin"],
+  display: "swap",
+});
 
 const righteous = Righteous({
-  subsets: ['latin'],
-  weight: '400',
-  display: 'swap',
-})
+  subsets: ["latin"],
+  weight: "400",
+  display: "swap",
+});
 
 const fredokaOne = Francois_One({
-  subsets: ['latin'],
-  weight: '400',
-  display: 'swap',
-})
+  subsets: ["latin"],
+  weight: "400",
+  display: "swap",
+});
 
 type TextPreset = {
-  name: string
-  fontSize: number
-  fontWeight: string
-  shadowColor: string
-  color: string
-  opacity: number
-  shadowBlurFactor: number
-}
+  name: string;
+  fontSize: number;
+  fontWeight: string;
+  shadowColor: string;
+  color: string;
+  opacity: number;
+  shadowBlurFactor: number;
+};
 
 const PRESETS: Record<string, TextPreset> = {
   glassWhiteBold: {
@@ -267,17 +279,24 @@ const PRESETS: Record<string, TextPreset> = {
     shadowColor: "rgba(23, 162, 184, 0.7)",
     shadowBlurFactor: 0.18,
   },
-}
+};
 
-export const ThumbnailCreator = ({ children }: { children: React.ReactNode }) => {
-  const [loading, setLoading] = useState(false)
-  const [imageSrc, setImageSrc] = useState<string | null>(null)
-  const [processedImageSrc, setProcessedImageSrc] = useState<string | null>(null)
-  const [error, setError] = useState<string | null>(null)
-  const [canvasReady, setCanvasReady] = useState(false)
-  const [processingStep, setProcessingStep] = useState<string>("")
-  const [presetKey, setPresetKey] = useState<keyof typeof PRESETS>("sunsetGlow")
-  const [text, setText] = useState("POV")
+export const ThumbnailCreator = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
+  const [loading, setLoading] = useState(false);
+  const [imageSrc, setImageSrc] = useState<string | null>(null);
+  const [processedImageSrc, setProcessedImageSrc] = useState<string | null>(
+    null,
+  );
+  const [error, setError] = useState<string | null>(null);
+  const [canvasReady, setCanvasReady] = useState(false);
+  const [processingStep, setProcessingStep] = useState<string>("");
+  const [presetKey, setPresetKey] =
+    useState<keyof typeof PRESETS>("sunsetGlow");
+  const [text, setText] = useState("POV");
   const [thumbnailId, setThumbnailId] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const { userId } = useAuth();
@@ -285,131 +304,136 @@ export const ThumbnailCreator = ({ children }: { children: React.ReactNode }) =>
   //  font options with Google Fonts
   const FONT_OPTIONS = [
     {
-      key: 'arial',
-      label: 'Arial',
-      stack: 'Arial, Helvetica, sans-serif'
+      key: "arial",
+      label: "Arial",
+      stack: "Arial, Helvetica, sans-serif",
     },
     {
-      key: 'impact',
-      label: 'Impact',
-      stack: 'Impact, Haettenschweiler, "Arial Black", sans-serif'
+      key: "impact",
+      label: "Impact",
+      stack: 'Impact, Haettenschweiler, "Arial Black", sans-serif',
     },
     {
-      key: 'inter',
-      label: 'Inter',
-      stack: `${inter.style.fontFamily}, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif`
+      key: "inter",
+      label: "Inter",
+      stack: `${inter.style.fontFamily}, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif`,
     },
     {
-      key: 'bebas',
-      label: 'Bebas Neue',
-      stack: `${bebasNeue.style.fontFamily}, Impact, "Arial Black", sans-serif`
+      key: "bebas",
+      label: "Bebas Neue",
+      stack: `${bebasNeue.style.fontFamily}, Impact, "Arial Black", sans-serif`,
     },
     {
-      key: 'oswald',
-      label: 'Oswald',
-      stack: `${oswald.style.fontFamily}, Impact, "Arial Black", sans-serif`
+      key: "oswald",
+      label: "Oswald",
+      stack: `${oswald.style.fontFamily}, Impact, "Arial Black", sans-serif`,
     },
     {
-      key: 'righteous',
-      label: 'Righteous',
-      stack: `${righteous.style.fontFamily}, Impact, "Arial Black", sans-serif`
+      key: "righteous",
+      label: "Righteous",
+      stack: `${righteous.style.fontFamily}, Impact, "Arial Black", sans-serif`,
     },
     {
-      key: 'fredoka',
-      label: 'Fredoka One',
-      stack: `${fredokaOne.style.fontFamily}, Impact, "Arial Black", sans-serif`
+      key: "fredoka",
+      label: "Fredoka One",
+      stack: `${fredokaOne.style.fontFamily}, Impact, "Arial Black", sans-serif`,
     },
     {
-      key: 'mono',
-      label: 'Monospace',
-      stack: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace'
+      key: "mono",
+      label: "Monospace",
+      stack:
+        'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
     },
-  ] as const
+  ] as const;
 
-  const [fontKey, setFontKey] = useState<typeof FONT_OPTIONS[number]['key']>('arial')
-  const canvasRef = useRef<HTMLCanvasElement>(null)
+  const [fontKey, setFontKey] =
+    useState<(typeof FONT_OPTIONS)[number]["key"]>("arial");
+  const canvasRef = useRef<HTMLCanvasElement>(null);
 
   // Memoize FONT_OPTIONS to avoid recreating on every render
-  const fontOptions = React.useMemo(() => FONT_OPTIONS, [])
+  const fontOptions = React.useMemo(() => FONT_OPTIONS, []);
 
-  const handleSelectedImage = useCallback(async (file?: File) => {
-    if (!file || !userId) return;
+  const handleSelectedImage = useCallback(
+    async (file?: File) => {
+      if (!file || !userId) return;
 
-    setLoading(true);
-    setError(null);
-    setProcessedImageSrc(null);
-    setProcessingStep("Uploading original image...");
+      setLoading(true);
+      setError(null);
+      setProcessedImageSrc(null);
+      setProcessingStep("Uploading original image...");
 
-    try {
-      // 1. Upload original image to blob via API
-      const formData = new FormData();
-      formData.append('file', file);
+      try {
+        // 1. Upload original image to blob via API
+        const formData = new FormData();
+        formData.append("file", file);
 
-      const uploadResponse = await fetch('/api/upload', {
-        method: 'POST',
-        body: formData,
-      });
+        const uploadResponse = await fetch("/api/upload", {
+          method: "POST",
+          body: formData,
+        });
 
-      if (!uploadResponse.ok) {
-        const error = await uploadResponse.json();
-        throw new Error(error.error || 'Upload failed');
-      }
-
-      const uploadData = await uploadResponse.json();
-      setThumbnailId(uploadData.thumbnailId);
-      setImageSrc(uploadData.originalImageUrl);
-
-      // 2. Client-side Background Removal
-      setProcessingStep("Removing background (this may take a moment)...");
-      
-      // Dynamic import to ensure it loads only on client
-      const { removeBackground } = await import("@imgly/background-removal");
-      
-      const imageBlob = await removeBackground(file, {
-        progress: (key: string, current: number, total: number) => {
-          const percent = Math.round((current / total) * 100);
-          setProcessingStep(`Removing background: ${percent}%`);
+        if (!uploadResponse.ok) {
+          const error = await uploadResponse.json();
+          throw new Error(error.error || "Upload failed");
         }
-      });
 
-      // 3. Upload processed image
-      setProcessingStep("Saving processed image...");
-      const processedFormData = new FormData();
-      processedFormData.append('file', imageBlob, 'processed.png');
-      processedFormData.append('thumbnailId', uploadData.thumbnailId);
+        const uploadData = await uploadResponse.json();
+        setThumbnailId(uploadData.thumbnailId);
+        setImageSrc(uploadData.originalImageUrl);
 
-      const processUploadResponse = await fetch('/api/upload-processed', {
-        method: 'POST',
-        body: processedFormData,
-      });
+        // 2. Client-side Background Removal
+        setProcessingStep("Removing background (this may take a moment)...");
 
-      if (!processUploadResponse.ok) {
-         // If upload fails, we still have the local blob to show, but warn user
-         console.error("Failed to upload processed image backup");
-      } else {
-        const processData = await processUploadResponse.json();
-        // Use the uploaded URL if available, otherwise we can use the local blob URL
-        // But for consistency let's use the local blob URL for immediate display
+        // Dynamic import to ensure it loads only on client
+        const { removeBackground } = await import("@imgly/background-removal");
+
+        const imageBlob = await removeBackground(file, {
+          progress: (key: string, current: number, total: number) => {
+            const percent = Math.round((current / total) * 100);
+            setProcessingStep(`Removing background: ${percent}%`);
+          },
+        });
+
+        // 3. Upload processed image
+        setProcessingStep("Saving processed image...");
+        const processedFormData = new FormData();
+        processedFormData.append("file", imageBlob, "processed.png");
+        processedFormData.append("thumbnailId", uploadData.thumbnailId);
+
+        const processUploadResponse = await fetch("/api/upload-processed", {
+          method: "POST",
+          body: processedFormData,
+        });
+
+        if (!processUploadResponse.ok) {
+          // If upload fails, we still have the local blob to show, but warn user
+          console.error("Failed to upload processed image backup");
+        } else {
+          const processData = await processUploadResponse.json();
+          // Use the uploaded URL if available, otherwise we can use the local blob URL
+          // But for consistency let's use the local blob URL for immediate display
+        }
+
+        const processedUrl = URL.createObjectURL(imageBlob);
+        setProcessedImageSrc(processedUrl);
+        setCanvasReady(true);
+        setProcessingStep("Complete!");
+      } catch (err: unknown) {
+        const errorMessage =
+          err instanceof Error ? err.message : "Unknown error occurred";
+        setError(errorMessage);
+        toast.error(errorMessage);
+        console.error("Image processing error:", err);
+        // Fallback: If background removal fails, just use original image
+        if (imageSrc) {
+          setCanvasReady(true);
+        }
+      } finally {
+        setLoading(false);
       }
-
-      const processedUrl = URL.createObjectURL(imageBlob);
-      setProcessedImageSrc(processedUrl);
-      setCanvasReady(true);
-      setProcessingStep("Complete!");
-
-    } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : "Unknown error occurred";
-      setError(errorMessage);
-      toast.error(errorMessage);
-      console.error("Image processing error:", err);
-      // Fallback: If background removal fails, just use original image
-      if (imageSrc) {
-         setCanvasReady(true);
-      }
-    } finally {
-      setLoading(false);
-    }
-  }, [userId, imageSrc]);
+    },
+    [userId, imageSrc],
+  );
 
   const handleSaveThumbnail = useCallback(async () => {
     if (!thumbnailId) return;
@@ -418,9 +442,9 @@ export const ThumbnailCreator = ({ children }: { children: React.ReactNode }) =>
     setError(null);
 
     try {
-      const response = await fetch('/api/save', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/save", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           thumbnailId: thumbnailId,
           settings: {
@@ -433,15 +457,15 @@ export const ThumbnailCreator = ({ children }: { children: React.ReactNode }) =>
 
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.error || 'Save failed');
+        throw new Error(error.error || "Save failed");
       }
 
       const data = await response.json();
-      console.log('Thumbnail saved:', data.thumbnail);
-      toast.success('Thumbnail saved successfully!');
-
+      console.log("Thumbnail saved:", data.thumbnail);
+      toast.success("Thumbnail saved successfully!");
     } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to save thumbnail';
+      const errorMessage =
+        err instanceof Error ? err.message : "Failed to save thumbnail";
       setError(errorMessage);
       toast.error(errorMessage);
       console.error("Save thumbnail error:", err);
@@ -469,70 +493,63 @@ export const ThumbnailCreator = ({ children }: { children: React.ReactNode }) =>
       canvas.width = bg.width;
       canvas.height = bg.height;
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      
+
       // Step 1: Draw the original background image
       ctx.drawImage(bg, 0, 0, canvas.width, canvas.height);
 
-      // Helper function to draw text
-      const drawText = () => {
-        ctx.save();
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
+      // Step 2: Draw text IMMEDIATELY (not in fg.onload callback)
+      ctx.save();
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
 
-        const baseSize = activePreset.fontSize || 100;
-        const fontWeight = activePreset.fontWeight || "bold";
-        const fontFamily = fontOptions.find(f => f.key === fontKey)?.stack || 'Arial, Helvetica, sans-serif';
+      const baseSize = activePreset.fontSize || 100;
+      const fontWeight = activePreset.fontWeight || "bold";
+      const fontFamily =
+        fontOptions.find((f) => f.key === fontKey)?.stack ||
+        "Arial, Helvetica, sans-serif";
 
-        ctx.font = `${fontWeight} ${baseSize}px ${fontFamily}`;
-        const measured = ctx.measureText(text).width;
-        const targetWidth = canvas.width * 0.9;
-        const scaled = Math.max(24, Math.floor((baseSize * targetWidth) / Math.max(1, measured)));
-        ctx.font = `${fontWeight} ${scaled}px ${fontFamily}`;
+      ctx.font = `${fontWeight} ${baseSize}px ${fontFamily}`;
+      const measured = ctx.measureText(text).width;
+      const targetWidth = canvas.width * 0.9;
+      const scaled = Math.max(
+        24,
+        Math.floor((baseSize * targetWidth) / Math.max(1, measured)),
+      );
+      ctx.font = `${fontWeight} ${scaled}px ${fontFamily}`;
 
-        ctx.fillStyle = activePreset.color;
-        ctx.globalAlpha = activePreset.opacity || 1;
+      ctx.fillStyle = activePreset.color;
+      ctx.globalAlpha = activePreset.opacity || 1;
 
-        const x = canvas.width / 2;
-        const y = canvas.height / 2;
+      const x = canvas.width / 2;
+      const y = canvas.height / 2;
 
-        ctx.translate(x, y);
-        ctx.shadowColor = activePreset.shadowColor;
-        ctx.shadowBlur = Math.floor(scaled * (activePreset.shadowBlurFactor || 0.1));
-        ctx.shadowOffsetX = 0;
-        ctx.shadowOffsetY = 0;
-        ctx.fillText(text, 0, 0);
-        ctx.restore();
-        
-        // Reset globalAlpha after text drawing
-        ctx.globalAlpha = 1;
-      };
+      ctx.translate(x, y);
+      ctx.shadowColor = activePreset.shadowColor;
+      ctx.shadowBlur = Math.floor(
+        scaled * (activePreset.shadowBlurFactor || 0.1),
+      );
+      ctx.shadowOffsetX = 0;
+      ctx.shadowOffsetY = 0;
+      ctx.fillText(text, 0, 0);
+      ctx.restore();
 
-      // Helper function to draw the foreground (person cutout)
-      const drawForeground = (fg: HTMLImageElement) => {
-        ctx.save();
-        ctx.globalAlpha = 1;
-        ctx.drawImage(fg, 0, 0, canvas.width, canvas.height);
-        ctx.restore();
-      };
+      // Reset globalAlpha after text drawing
+      ctx.globalAlpha = 1;
 
-      // If we have a processed foreground image, layer properly: bg -> text -> fg
+      // Step 3: Draw the foreground (person with removed background) on top
       if (processedImageSrc) {
         const fg = new Image();
         fg.crossOrigin = "anonymous";
         fg.onload = () => {
-          // Step 2: Draw text on top of background (will appear behind person)
-          drawText();
-          // Step 3: Draw the foreground (person with removed background) on top
-          drawForeground(fg);
+          ctx.save();
+          ctx.globalAlpha = 1;
+          ctx.drawImage(fg, 0, 0, canvas.width, canvas.height);
+          ctx.restore();
         };
         fg.onerror = () => {
           console.error("Failed to load foreground image");
-          drawText();
         };
         fg.src = processedImageSrc;
-      } else {
-        // No processed image, just draw the text on the background
-        drawText();
       }
     };
     bg.src = imageSrc;
@@ -566,20 +583,26 @@ export const ThumbnailCreator = ({ children }: { children: React.ReactNode }) =>
     setPresetKey(key);
   }, []);
 
-  const handleTextChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    setText(e.target.value);
-  }, []);
+  const handleTextChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setText(e.target.value);
+    },
+    [],
+  );
 
   const handleFontChange = useCallback((value: string) => {
-    setFontKey(value as typeof FONT_OPTIONS[number]['key']);
+    setFontKey(value as (typeof FONT_OPTIONS)[number]["key"]);
   }, []);
 
-  const handleKeyDown = useCallback((e: React.KeyboardEvent, action: () => void) => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      action();
-    }
-  }, []);
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent, action: () => void) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        action();
+      }
+    },
+    [],
+  );
   return (
     <section className="w-full flex flex-col items-center justify-center space-y-12 ">
       {loading && (
@@ -593,8 +616,12 @@ export const ThumbnailCreator = ({ children }: { children: React.ReactNode }) =>
                 <div className="absolute -inset-2 bg-primary/20 rounded-full animate-ping" />
               </div>
               <div className="text-center space-y-2">
-                <h3 className="text-lg font-semibold text-black">Processing Image</h3>
-                <p className="text-sm text-black">{processingStep || "Please wait..."}</p>
+                <h3 className="text-lg font-semibold text-black">
+                  Processing Image
+                </h3>
+                <p className="text-sm text-black">
+                  {processingStep || "Please wait..."}
+                </p>
               </div>
               <LoadingSpinner />
             </div>
@@ -609,14 +636,16 @@ export const ThumbnailCreator = ({ children }: { children: React.ReactNode }) =>
               <CheckCircle className="w-5 h-5 text-green-500" />
               <h3 className="text-2xl font-bold text-white">Preview Ready</h3>
             </div>
-            <p className="text-muted">Your thumbnail has been processed and is ready for download</p>
+            <p className="text-muted">
+              Your thumbnail has been processed and is ready for download
+            </p>
           </div>
 
           <div className="relative group">
             <div className="absolute -inset-1 bg-gradient-to-r from-primary/20 to-accent/20 rounded-2xl blur opacity-25 group-hover:opacity-50 transition duration-300" />
             <div className="relative rounded-2xl p-6 shadow-xl">
-              <canvas 
-                ref={canvasRef} 
+              <canvas
+                ref={canvasRef}
                 className="w-full rounded-xl shadow-lg bg-white"
                 aria-label="Thumbnail preview canvas"
                 role="img"
@@ -642,19 +671,28 @@ export const ThumbnailCreator = ({ children }: { children: React.ReactNode }) =>
               )}
             >
               <div className="absolute inset-0 bg-gradient-to-r from-primary to-primary/80 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-              <Download className="w-5 h-5 mr-2 relative z-10" aria-hidden="true" />
-              <span className="relative z-10">{saving ? "Saving..." : "Download Thumbnail"}</span>
+              <Download
+                className="w-5 h-5 mr-2 relative z-10"
+                aria-hidden="true"
+              />
+              <span className="relative z-10">
+                {saving ? "Saving..." : "Download Thumbnail"}
+              </span>
             </Button>
           </div>
 
           <div className="space-y-6">
             <div className="text-center space-y-2">
-              <div className="inline-flex items-center space-x-2 bg-primary/10 text-primary px-3 py-1.5 rounded-full text-sm font-medium">
+              {/* <div className="inline-flex items-center space-x-2 bg-primary/10 text-primary px-3 py-1.5 rounded-full text-sm font-medium">
                 <Palette className="w-4 h-4" />
                 <span>Text Styles</span>
-              </div>
-              <h3 className="text-xl font-semibold text-white">Choose Your Style</h3>
-              <p className="text-md text-white tracking-wide">Select a preset to customize your thumbnail text</p>
+              </div> */}
+              <h3 className="text-xl font-semibold text-white">
+                Choose Your Style
+              </h3>
+              <p className="text-md text-white tracking-wide">
+                Select a preset to customize your thumbnail text
+              </p>
             </div>
 
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 max-w-4xl mx-auto">
@@ -663,8 +701,14 @@ export const ThumbnailCreator = ({ children }: { children: React.ReactNode }) =>
                 return (
                   <Button
                     key={key}
-                    onClick={() => handlePresetChange(key as keyof typeof PRESETS)}
-                    onKeyDown={(e) => handleKeyDown(e, () => handlePresetChange(key as keyof typeof PRESETS))}
+                    onClick={() =>
+                      handlePresetChange(key as keyof typeof PRESETS)
+                    }
+                    onKeyDown={(e) =>
+                      handleKeyDown(e, () =>
+                        handlePresetChange(key as keyof typeof PRESETS),
+                      )
+                    }
                     aria-label={`Select ${preset.name} preset`}
                     aria-pressed={isSelected}
                     tabIndex={0}
@@ -682,20 +726,28 @@ export const ThumbnailCreator = ({ children }: { children: React.ReactNode }) =>
                         <div
                           className="w-20 h-3 rounded-full shadow-lg"
                           style={{
-                            backgroundColor: preset.color || '#ffffff',
-                            boxShadow: preset.shadowColor ? `0 0 20px ${preset.shadowColor}` : 'none',
+                            backgroundColor: preset.color || "#ffffff",
+                            boxShadow: preset.shadowColor
+                              ? `0 0 20px ${preset.shadowColor}`
+                              : "none",
                             opacity: preset.opacity || 1,
                           }}
                           aria-hidden="true"
                         />
                         {isSelected && (
-                          <div className="absolute -inset-1 rounded-full border-2 border-primary animate-pulse" aria-hidden="true" />
+                          <div
+                            className="absolute -inset-1 rounded-full border-2 border-primary animate-pulse"
+                            aria-hidden="true"
+                          />
                         )}
                       </div>
                     </div>
 
                     {isSelected && (
-                      <div className="absolute top-2 right-2" aria-hidden="true">
+                      <div
+                        className="absolute top-2 right-2"
+                        aria-hidden="true"
+                      >
                         <CheckCircle className="w-4 h-4 text-primary" />
                       </div>
                     )}
@@ -704,12 +756,13 @@ export const ThumbnailCreator = ({ children }: { children: React.ReactNode }) =>
               })}
             </div>
 
-
-
             {/* Input area */}
             <div className="max-w-md mx-auto">
               {/* text to write  */}
-              <label htmlFor="thumbnail-text" className="block text-sm font-medium mb-2 text-white">
+              <label
+                htmlFor="thumbnail-text"
+                className="block text-sm font-medium mb-2 text-white"
+              >
                 What would you like to write...
               </label>
               <Input
@@ -724,11 +777,14 @@ export const ThumbnailCreator = ({ children }: { children: React.ReactNode }) =>
 
               {/* Font selector */}
               <div className="mt-4">
-                <label htmlFor="font-selector" className="block text-sm font-medium mb-2 text-white">
+                <label
+                  htmlFor="font-selector"
+                  className="block text-sm font-medium mb-2 text-white"
+                >
                   Font
                 </label>
                 <Select value={fontKey} onValueChange={handleFontChange}>
-                  <SelectTrigger 
+                  <SelectTrigger
                     id="font-selector"
                     className="w-[220px]"
                     aria-label="Select font family"
@@ -737,15 +793,15 @@ export const ThumbnailCreator = ({ children }: { children: React.ReactNode }) =>
                   </SelectTrigger>
                   <SelectContent>
                     {fontOptions.map((f) => (
-                      <SelectItem key={f.key} value={f.key}>{f.label}</SelectItem>
+                      <SelectItem key={f.key} value={f.key}>
+                        {f.label}
+                      </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
               </div>
             </div>
           </div>
-
-
         </div>
       )}
 
@@ -756,18 +812,16 @@ export const ThumbnailCreator = ({ children }: { children: React.ReactNode }) =>
       )}
 
       {error && (
-        <div 
+        <div
           className="max-w-md mx-auto p-4 bg-destructive/10 border border-destructive/20 rounded-xl animate-fade-in-up"
           role="alert"
           aria-live="polite"
         >
-          <p className="text-sm text-destructive text-center">
-            {error}
-          </p>
+          <p className="text-sm text-destructive text-center">{error}</p>
         </div>
       )}
 
       <div>{children}</div>
     </section>
-  )
-}
+  );
+};
