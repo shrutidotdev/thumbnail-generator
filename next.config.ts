@@ -1,6 +1,12 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  serverExternalPackages: [
+    "onnxruntime-node",
+    "@imgly/background-removal-node",
+  ],
+
+  turbopack: {},
   images: {
     remotePatterns: [
       {
